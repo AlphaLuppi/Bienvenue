@@ -2,6 +2,7 @@
 	import Counter from './Counter.svelte';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcomeFallback from '$lib/images/svelte-welcome.png';
+	export let data;
 </script>
 
 <svelte:head>
@@ -24,6 +25,14 @@
 	<h2>
 		try editing <strong>src/routes/+page.svelte</strong>
 	</h2>
+	<h2>
+		normalement je devrais avoir test :
+	</h2>
+	<ul>
+		{#each data.test as t}
+		  <li>{t.name}</li>
+		{/each}
+	</ul>
 
 	<Counter />
 </section>
