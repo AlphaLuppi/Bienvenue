@@ -26,14 +26,6 @@
 	<h2>
 		try editing <strong>src/routes/+page.svelte</strong>
 	</h2>
-	<h2>
-		normalement je devrais avoir test :
-	</h2>
-	<ul>
-		{#each data.tests as t}
-		  <li>{t.name}</li>
-		{/each}
-	</ul>
 
 	<Counter />
 </section>
