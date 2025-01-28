@@ -2,8 +2,7 @@
 	import Counter from './Counter.svelte';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcomeFallback from '$lib/images/svelte-welcome.png';
-	export let data;
-	console.log(data);
+	import { isProductionMode } from '$lib/environment';
 </script>
 
 <svelte:head>
@@ -26,6 +25,9 @@
 	<h2>
 		try editing <strong>src/routes/+page.svelte</strong>
 	</h2>
+	<h1>
+		On est en mode {isProductionMode() ? 'production' : 'développement'}
+	</h1>
 
 	<Counter />
 </section>
