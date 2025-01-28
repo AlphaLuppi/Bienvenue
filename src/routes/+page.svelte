@@ -30,7 +30,7 @@
 		normalement je devrais avoir test :
 	</h2>
 	<ul>
-		{#each data.test as t}
+		{#each data.tests as t}
 		  <li>{t.name}</li>
 		{/each}
 	</ul>
