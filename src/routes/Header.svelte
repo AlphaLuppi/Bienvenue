@@ -1,129 +1,112 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
+	import { page } from '$app/stores';
+	import logo from '$lib/images/bienvenue_logo_preview.png';
+	import "../app.css";
+	import { Button } from "$lib/components/ui/button";
+	import * as Menubar from "$lib/components/ui/menubar";
+
+	let isLoggedIn = false;
+
+	let isMenuOpen = false;
+	const toggleMenu = () => isMenuOpen = !isMenuOpen;
 </script>
 
 <header>
-	<div class="corner">
-		<a href="https://svelte.dev/docs/kit">
-			<img src={logo} alt="SvelteKit" />
-		</a>
-	</div>
+	<nav class="flex flex-no-wrap relative w-full items-center justify-between py-4 shadow-lg shadow-black/10 dark:bg-neutral-600 dark:shadow-black/10">
+		<div class="flex w-full flex-wrap items-center justify-between px-3 mx-auto max-w-[1400px]">
+			<Menubar.Root class="w-full justify-between">
+				<div class="flex items-center gap-4">
+					<Menubar.Menu>
+						<a href="/" class="flex items-center">
+							<img src={logo} alt="Logo" class="h-[40px]" />
+						</a>
+					</Menubar.Menu>
+				</div>
 
-	<nav>
-		<svg viewBox="0 0 2 3" aria-hidden="true">
-			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-		</svg>
-		<ul>
-			<li aria-current={page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">Home</a>
-			</li>
-			<li aria-current={page.url.pathname === '/about' ? 'page' : undefined}>
-				<a href="/about">About</a>
-			</li>
-			<li aria-current={page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
-				<a href="/sverdle">Sverdle</a>
-			</li>
-		</ul>
-		<svg viewBox="0 0 2 3" aria-hidden="true">
-			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-		</svg>
+				<!-- 
+				Ici, si jamais on veut ajouter des éléments dans le menu, on peut le faire. La seule chose est que pour le moment, les éléments du menu se montre au clic. Il faudrait trouver un moyen de les montrer au survol.
+				<div class="flex items-center gap-2">
+					<Menubar.Menu>
+						<Menubar.Trigger>Accueil</Menubar.Trigger>
+						<Menubar.Content>
+							<Menubar.Item>
+								<a href="/">Page d'accueil</a>
+							</Menubar.Item>
+							<Menubar.Item>
+								<a href="/nouveautes">Nouveautés</a>
+							</Menubar.Item>
+							<Menubar.Separator />
+							<Menubar.Item>
+								<a href="/a-propos">À propos</a>
+							</Menubar.Item>
+						</Menubar.Content>
+					</Menubar.Menu>
+
+					<Menubar.Menu>
+						<Menubar.Trigger>Services</Menubar.Trigger>
+						<Menubar.Content>
+							<Menubar.Item>
+								<a href="/services/consultation">Consultation</a>
+							</Menubar.Item>
+							<Menubar.Item>
+								<a href="/services/formation">Formation</a>
+							</Menubar.Item>
+							<Menubar.Item>
+								<a href="/services/accompagnement">Accompagnement</a>
+							</Menubar.Item>
+						</Menubar.Content>
+					</Menubar.Menu>
+
+					<Menubar.Menu>
+						<Menubar.Trigger>Ressources</Menubar.Trigger>
+						<Menubar.Content>
+							<Menubar.Item>
+								<a href="/blog">Blog</a>
+							</Menubar.Item>
+							<Menubar.Item>
+								<a href="/faq">FAQ</a>
+							</Menubar.Item>
+							<Menubar.Separator />
+							<Menubar.Item>
+								<a href="/contact">Contact</a>
+							</Menubar.Item>
+						</Menubar.Content>
+					</Menubar.Menu>
+				</div> -->
+
+				<div class="flex items-center gap-2">
+					{#if !isLoggedIn}
+						<Menubar.Menu>
+							<Button variant="secondary">
+								Se connecter
+							</Button>
+						</Menubar.Menu>
+						<Menubar.Menu>
+							<Button variant="default">
+								S'inscrire
+							</Button>
+						</Menubar.Menu>
+					{:else}
+						<Menubar.Menu>
+							<Menubar.Trigger>Mon compte</Menubar.Trigger>
+							<Menubar.Content>
+								<Menubar.Item>
+									<a href="/profil">Profil</a>
+								</Menubar.Item>
+								<Menubar.Item>
+									<a href="/parametres">Paramètres</a>
+								</Menubar.Item>
+								<Menubar.Separator />
+								<Menubar.Item>
+									<button class="w-full text-left text-red-500">
+										Se déconnecter
+									</button>
+								</Menubar.Item>
+							</Menubar.Content>
+						</Menubar.Menu>
+					{/if}
+				</div>
+			</Menubar.Root>
+		</div>
 	</nav>
-
-	<div class="corner">
-		<a href="https://github.com/sveltejs/kit">
-			<img src={github} alt="GitHub" />
-		</a>
-	</div>
 </header>
-
-<style>
-	header {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.corner {
-		width: 3em;
-		height: 3em;
-	}
-
-	.corner a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		height: 100%;
-	}
-
-	.corner img {
-		width: 2em;
-		height: 2em;
-		object-fit: contain;
-	}
-
-	nav {
-		display: flex;
-		justify-content: center;
-		--background: rgba(255, 255, 255, 0.7);
-	}
-
-	svg {
-		width: 2em;
-		height: 3em;
-		display: block;
-	}
-
-	path {
-		fill: var(--background);
-	}
-
-	ul {
-		position: relative;
-		padding: 0;
-		margin: 0;
-		height: 3em;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		list-style: none;
-		background: var(--background);
-		background-size: contain;
-	}
-
-	li {
-		position: relative;
-		height: 100%;
-	}
-
-	li[aria-current='page']::before {
-		--size: 6px;
-		content: '';
-		width: 0;
-		height: 0;
-		position: absolute;
-		top: 0;
-		left: calc(50% - var(--size));
-		border: var(--size) solid transparent;
-		border-top: var(--size) solid var(--color-theme-1);
-	}
-
-	nav a {
-		display: flex;
-		height: 100%;
-		align-items: center;
-		padding: 0 0.5rem;
-		color: var(--color-text);
-		font-weight: 700;
-		font-size: 0.8rem;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		text-decoration: none;
-		transition: color 0.2s linear;
-	}
-
-	a:hover {
-		color: var(--color-theme-1);
-	}
-</style>
