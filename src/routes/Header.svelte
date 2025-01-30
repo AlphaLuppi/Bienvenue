@@ -1,112 +1,116 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { cn } from '$lib/utils';
+	import { AlignJustify, XIcon } from 'lucide-svelte';
+	import { fly } from 'svelte/transition';
 	import logo from '$lib/images/bienvenue_logo_preview.png';
-	import "../app.css";
-	import { Button } from "$lib/components/ui/button";
-	import * as Menubar from "$lib/components/ui/menubar";
+	
+	// TODO: Ajouter les liens pertinents ici.
+	const menuItem = [
+		{
+			id: 1,
+			label: 'Features',
+			href: '#'
+		},
+		{
+			id: 2,
+			label: 'Pricing',
+			href: '#'
+		},
+		{
+			id: 3,
+			label: 'Careers',
+			href: '#'
+		},
+		{
+			id: 4,
+			label: 'Contact Us',
+			href: '#'
+		}
+	];
 
-	let isLoggedIn = false;
+	let hamburgerMenuIsOpen = false;
 
-	let isMenuOpen = false;
-	const toggleMenu = () => isMenuOpen = !isMenuOpen;
+	function toggleOverflowHidden(node: HTMLElement) {
+		node.addEventListener('click', () => {
+			hamburgerMenuIsOpen = !hamburgerMenuIsOpen;
+			const html = document.querySelector('html');
+			if (html) {
+				if (hamburgerMenuIsOpen) {
+					html.classList.add('overflow-hidden');
+				} else {
+					html.classList.remove('overflow-hidden');
+				}
+			}
+		});
+	}
+	let innerWidth = 0;
 </script>
 
-<header>
-	<nav class="flex flex-no-wrap relative w-full items-center justify-between py-4 shadow-lg shadow-black/10 dark:bg-neutral-600 dark:shadow-black/10">
-		<div class="flex w-full flex-wrap items-center justify-between px-3 mx-auto max-w-[1400px]">
-			<Menubar.Root class="w-full justify-between">
-				<div class="flex items-center gap-4">
-					<Menubar.Menu>
-						<a href="/" class="flex items-center">
-							<img src={logo} alt="Logo" class="h-[40px]" />
-						</a>
-					</Menubar.Menu>
-				</div>
+<svelte:window bind:innerWidth />
+<header
+	class="fixed left-0 top-0 z-50 w-full border-b backdrop-blur-md"
+>
+	<div class="container flex h-14 items-center justify-between">
+		<a class="text-md flex items-center" href="/">
+			<img src={logo} alt="Bienvenue" class="h-auto w-48 aspect-auto" />
+		</a>
 
-				<!-- 
-				Ici, si jamais on veut ajouter des éléments dans le menu, on peut le faire. La seule chose est que pour le moment, les éléments du menu se montre au clic. Il faudrait trouver un moyen de les montrer au survol.
-				<div class="flex items-center gap-2">
-					<Menubar.Menu>
-						<Menubar.Trigger>Accueil</Menubar.Trigger>
-						<Menubar.Content>
-							<Menubar.Item>
-								<a href="/">Page d'accueil</a>
-							</Menubar.Item>
-							<Menubar.Item>
-								<a href="/nouveautes">Nouveautés</a>
-							</Menubar.Item>
-							<Menubar.Separator />
-							<Menubar.Item>
-								<a href="/a-propos">À propos</a>
-							</Menubar.Item>
-						</Menubar.Content>
-					</Menubar.Menu>
-
-					<Menubar.Menu>
-						<Menubar.Trigger>Services</Menubar.Trigger>
-						<Menubar.Content>
-							<Menubar.Item>
-								<a href="/services/consultation">Consultation</a>
-							</Menubar.Item>
-							<Menubar.Item>
-								<a href="/services/formation">Formation</a>
-							</Menubar.Item>
-							<Menubar.Item>
-								<a href="/services/accompagnement">Accompagnement</a>
-							</Menubar.Item>
-						</Menubar.Content>
-					</Menubar.Menu>
-
-					<Menubar.Menu>
-						<Menubar.Trigger>Ressources</Menubar.Trigger>
-						<Menubar.Content>
-							<Menubar.Item>
-								<a href="/blog">Blog</a>
-							</Menubar.Item>
-							<Menubar.Item>
-								<a href="/faq">FAQ</a>
-							</Menubar.Item>
-							<Menubar.Separator />
-							<Menubar.Item>
-								<a href="/contact">Contact</a>
-							</Menubar.Item>
-						</Menubar.Content>
-					</Menubar.Menu>
-				</div> -->
-
-				<div class="flex items-center gap-2">
-					{#if !isLoggedIn}
-						<Menubar.Menu>
-							<Button variant="secondary">
-								Se connecter
-							</Button>
-						</Menubar.Menu>
-						<Menubar.Menu>
-							<Button variant="default">
-								S'inscrire
-							</Button>
-						</Menubar.Menu>
-					{:else}
-						<Menubar.Menu>
-							<Menubar.Trigger>Mon compte</Menubar.Trigger>
-							<Menubar.Content>
-								<Menubar.Item>
-									<a href="/profil">Profil</a>
-								</Menubar.Item>
-								<Menubar.Item>
-									<a href="/parametres">Paramètres</a>
-								</Menubar.Item>
-								<Menubar.Separator />
-								<Menubar.Item>
-									<button class="w-full text-left text-red-500">
-										Se déconnecter
-									</button>
-								</Menubar.Item>
-							</Menubar.Content>
-						</Menubar.Menu>
-					{/if}
-				</div>
-			</Menubar.Root>
+		<div class="ml-auto flex h-full items-center">
+			<Button variant="outline" class="mr-6 text-sm" href="/signin">Se connecter</Button>
+			<Button variant="default" class="mr-6 text-sm" href="/signup">S'inscrire</Button>
 		</div>
-	</nav>
+		<button class="ml-6 md:hidden" use:toggleOverflowHidden>
+			<span class="sr-only">Toggle menu</span>
+			{#if hamburgerMenuIsOpen}
+				<XIcon  strokeWidth={1.4} class='text-gray-300'/>
+			{:else}
+				<AlignJustify strokeWidth={1.4} class='text-gray-300' />
+			{/if}
+		</button>
+	</div>
 </header>
+
+<nav
+	class={cn(
+		`fixed left-0 top-0 z-50 h-screen w-full overflow-auto `,
+		{
+			'pointer-events-none': !hamburgerMenuIsOpen
+		},
+		{
+			'bg-background/70 backdrop-blur-md': hamburgerMenuIsOpen
+		}
+	)}
+>
+	{#if hamburgerMenuIsOpen === true}
+		<div class="container flex h-14 items-center justify-between">
+			<a class="text-md flex items-center" href="/"> Bienvenue </a>
+
+			<button class="md:hidden" use:toggleOverflowHidden>
+				<span class="sr-only">Toggle menu</span>
+				{#if hamburgerMenuIsOpen}
+					<XIcon strokeWidth={1.4} class='text-gray-300'/>
+				{:else}
+					<AlignJustify strokeWidth={1.4} class='text-gray-300'/>
+				{/if}
+			</button>
+		</div>
+		<ul
+			in:fly={{ y: -30, duration: 400 }}
+			class="flex flex-col uppercase ease-in md:flex-row md:items-center md:normal-case"
+		>
+			{#each menuItem as item, i}
+				<li class="border-grey-dark border-b py-0.5 pl-6 md:border-none">
+					<a
+						class="hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-300 md:translate-y-0 md:text-sm md:transition-colors {hamburgerMenuIsOpen
+							? '[&_a]:translate-y-0'
+							: ''}"
+						href={item.href}
+					>
+						{item.label}
+					</a>
+				</li>
+			{/each}
+		</ul>
+	{/if}
+</nav>
