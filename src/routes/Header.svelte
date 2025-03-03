@@ -6,30 +6,12 @@
 	import logo from '$lib/images/bienvenue_logo_preview.png';
 	
 	// TODO: Ajouter les liens pertinents ici.
-	const menuItem = [
-		{
-			id: 1,
-			label: 'Features',
-			href: '#'
-		},
-		{
-			id: 2,
-			label: 'Pricing',
-			href: '#'
-		},
-		{
-			id: 3,
-			label: 'Careers',
-			href: '#'
-		},
-		{
-			id: 4,
-			label: 'Contact Us',
-			href: '#'
-		}
-	];
+	const MENU_ITEMS = [
+		{ id: 'features', label: 'Features', href: '#' },
+		{ id: 'pricing', label: 'Pricing', href: '#' }
+	] as const;
 
-	let hamburgerMenuIsOpen = false;
+	let hamburgerMenuIsOpen = $state(false);
 
 	function toggleOverflowHidden(node: HTMLElement) {
 		node.addEventListener('click', () => {
@@ -44,7 +26,7 @@
 			}
 		});
 	}
-	let innerWidth = 0;
+	let innerWidth = $state(0);
 </script>
 
 <svelte:window bind:innerWidth />
@@ -99,7 +81,7 @@
 			in:fly={{ y: -30, duration: 400 }}
 			class="flex flex-col uppercase ease-in md:flex-row md:items-center md:normal-case"
 		>
-			{#each menuItem as item, i}
+			{#each MENU_ITEMS as item, i}
 				<li class="border-grey-dark border-b py-0.5 pl-6 md:border-none">
 					<a
 						class="hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-300 md:translate-y-0 md:text-sm md:transition-colors {hamburgerMenuIsOpen

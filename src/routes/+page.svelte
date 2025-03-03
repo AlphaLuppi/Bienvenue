@@ -6,25 +6,73 @@
 	import Header from "./Header.svelte";
 	import InteractiveHover from "$lib/components/InteractiveHover.svelte";
 	import WordsPullUp from "$lib/components/WordsPullUp.svelte";
-
-	let jobs = [
-		"Médecin,",
-		"Boulanger,",
-		"Epicier,",
-		"Maçon,",
-		"Plombier,",
-		"Cuisinier,",
-		"Electricien,",
-	]
-	let currentJob = 0;
+	import { fade, fly } from 'svelte/transition';
+	import { cubicInOut } from 'svelte/easing';
+    import CardBody from "$lib/components/magic_card/CardBody.svelte";
+    import CardContainer from "$lib/components/magic_card/CardContainer.svelte";
+    import * as Form from "$lib/components/ui/form";
+    import { onMount } from 'svelte';
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+	import Phrase from "./Phrase.svelte";
+	import Footer from "$lib/components/Footer.svelte";
+	import LifestyleFeatures from "$lib/components/LifestyleFeatures.svelte";
+	import Separator from "$lib/components/Separator.svelte";
 	let interval: number;
+	let begin = $state(false);
+	
+	// Utiliser $derived pour les calculs
+	const jobs = ["médecin", "boulanger", "épicier"] as const;
+	let currentJobIndex = $state(0);
+	const currentJob = $derived(jobs[currentJobIndex % jobs.length]);
+
 	const browser = typeof window !== "undefined";
+
+	let typeAction = "";
+	let typeBien = "";
+	let localisationType = "";
+	let localisationsResult: string[] = [];
+	let metiersResult: string[] = [];
+	let loisirsResult: string[] = [];
 
 	const startInterval = () => {
 		interval = setInterval(() => {
-			currentJob = (currentJob + 1) % jobs.length;
+			currentJobIndex = (currentJobIndex + 1) % jobs.length;
 		}, 2000);
 	}
+
+	function handleSubmit() {
+		console.log({
+			typeAction,
+			typeBien,
+			localisationType,
+			localisationsResult,
+			metiersResult,
+			loisirsResult
+		});
+	}
+
+	function handleClose() {
+		begin = false;
+	}
+
+	function handleOutsideClick(event: MouseEvent) {
+		if (event.target === event.currentTarget) {
+			handleClose();
+		}
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') {
+			handleClose();
+		}
+	}
+
+	onMount(() => {
+		document.addEventListener('keydown', handleKeydown);
+		return () => {
+			document.removeEventListener('keydown', handleKeydown);
+		};
+	});
 </script>
 
 <!-- Header -->
@@ -37,27 +85,39 @@
 
 <section id="hero" class="relative mx-auto mt-32 max-w-7xl px-6 text-center md:px-8">
 
-<h1
-	class="text-5xl font-bold"
->
-	<span class="inline-flex items-center gap-2">
+<h1 class="inline-flex animate-text-gradient bg-gradient-to-r from-[#ACACAC] via-[#363636] to-[#ACACAC] bg-[200%_auto] text-5xl text-center text-transparent font-medium bg-clip-text">
+	Le monde s'ouvre enfin à vous.
+</h1>
+	<br class="hidden md:block" />
+	<span class="mt-10 inline-flex items-center gap-2 font-bold text-4xl">
+		Vous êtes
 		{#each jobs as job, i}
-			{#if i === currentJob}
-				<WordsPullUp
-					class="text-5xl font-bold tracking-tight text-black dark:text-white md:text-3xl md:leading-[5rem]"
-					words={job}
-				/>
+			{#if i === currentJobIndex}
+				<span class="text-4xl font-bold tracking-[-0.02em] text-black dark:text-white md:text-7xl md:leading-[5rem]">
+					<WordsPullUp words={job} />
+				</span>
 			{/if}
 		{/each}
-		<span class="text-5xl font-bold tracking-tight text-black dark:text-white md:text-3xl md:leading-[5rem]">
-			le monde s'ouvre enfin à vous.
-		</span>
+		?
 	</span>
-</h1>
-
+<br />
 {#if browser}
 	{@const interval = startInterval()}
 {/if}
-<!-- Call to action -->
-	<InteractiveHover text="Commencer" class="mt-10" />
+
+{#if !begin}
+	<InteractiveHover 
+		text="Commencer" 
+		class="mt-10"
+		bind:value={begin}
+	/>
+{:else}
+	<Phrase bind:begin={begin} />
+{/if}
+
+<Separator gradient={true} />
+
+<LifestyleFeatures />
 </section>
+
+<Footer />
