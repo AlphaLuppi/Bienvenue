@@ -11,13 +11,14 @@
     import CardBody from "$lib/components/magic_card/CardBody.svelte";
     import CardContainer from "$lib/components/magic_card/CardContainer.svelte";
     import * as Form from "$lib/components/ui/form";
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import Phrase from "./Phrase.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import LifestyleFeatures from "$lib/components/LifestyleFeatures.svelte";
 	import Separator from "$lib/components/Separator.svelte";
-	let interval: number;
+	import Testimonials from "$lib/components/Testimonials.svelte";
+	let interval: ReturnType<typeof setInterval>;
 	let begin = $state(false);
 	
 	// Utiliser $derived pour les calculs
@@ -35,10 +36,20 @@
 	let loisirsResult: string[] = [];
 
 	const startInterval = () => {
+		// Nettoyer l'intervalle existant si présent
+		if (interval) clearInterval(interval);
+		
 		interval = setInterval(() => {
 			currentJobIndex = (currentJobIndex + 1) % jobs.length;
 		}, 2000);
+
+		return interval;
 	}
+
+	// Nettoyer l'intervalle quand le composant est détruit
+	onDestroy(() => {
+		if (interval) clearInterval(interval);
+	});
 
 	function handleSubmit() {
 		console.log({
@@ -83,41 +94,58 @@
 
 <Header />
 
-<section id="hero" class="relative mx-auto mt-32 max-w-7xl px-6 text-center md:px-8">
+<main class="relative">
+	<div class="relative h-[600px]">
+		<section id="hero" class="relative mx-auto mt-32 max-w-7xl px-6 text-center md:px-8">
+			<div class="flex flex-col items-center">
+				<h1 class="inline-flex bg-gradient-to-r from-[#ACACAC] via-[#363636] to-[#ACACAC] bg-[200%_auto] text-5xl text-center text-transparent font-medium bg-clip-text mb-16 animate-text-gradient will-change-transform">
+					Le monde s'ouvre enfin à vous.
+				</h1>
+				
+				<div class="flex flex-col items-center justify-center min-h-[120px] mb-16">
+					<span class="inline-flex items-center gap-2 font-bold text-4xl">
+						Vous êtes
+						{#each jobs as job, i}
+							{#if i === currentJobIndex}
+								<span class="text-4xl font-bold tracking-[-0.02em] text-black dark:text-white md:text-7xl md:leading-[5rem] will-change-transform">
+									<WordsPullUp words={job} />
+								</span>
+							{/if}
+						{/each}
+						?
+					</span>
+				</div>
 
-<h1 class="inline-flex animate-text-gradient bg-gradient-to-r from-[#ACACAC] via-[#363636] to-[#ACACAC] bg-[200%_auto] text-5xl text-center text-transparent font-medium bg-clip-text">
-	Le monde s'ouvre enfin à vous.
-</h1>
-	<br class="hidden md:block" />
-	<span class="mt-10 inline-flex items-center gap-2 font-bold text-4xl">
-		Vous êtes
-		{#each jobs as job, i}
-			{#if i === currentJobIndex}
-				<span class="text-4xl font-bold tracking-[-0.02em] text-black dark:text-white md:text-7xl md:leading-[5rem]">
-					<WordsPullUp words={job} />
-				</span>
-			{/if}
-		{/each}
-		?
-	</span>
-<br />
-{#if browser}
-	{@const interval = startInterval()}
-{/if}
+				{#if browser}
+					{@const interval = startInterval()}
+				{/if}
 
-{#if !begin}
-	<InteractiveHover 
-		text="Commencer" 
-		class="mt-10"
-		bind:value={begin}
-	/>
-{:else}
-	<Phrase bind:begin={begin} />
-{/if}
+				<div class="flex items-center justify-center">
+					{#if !begin}
+						<InteractiveHover 
+							text="Commencer" 
+							bind:value={begin}
+						/>
+					{/if}
+				</div>
+			</div>
+		</section>
+	</div>
 
-<Separator gradient={true} />
+	{#if begin}
+		<div class="fixed inset-0 z-50 flex items-center justify-center">
+			<Phrase bind:begin={begin} />
+		</div>
+	{/if}
 
-<LifestyleFeatures />
-</section>
+	<div class="relative bg-background">
+		<Separator gradient={true} />
+		<LifestyleFeatures />
+		<Separator gradient={true} />
+		<div class="container mx-auto px-4 py-16">
+			<Testimonials />
+		</div>
+	</div>
+</main>
 
 <Footer />

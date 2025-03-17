@@ -61,72 +61,69 @@
 
 </script>
 
-<!-- Retirer le backdrop-blur-sm si ça ram trop -->
 <div 
-class="fixed inset-0 bg-background/80 cursor-default"  
-transition:fade={{ duration: 200 }}
-onclick={handleOutsideClick}
-onkeydown={handleKeydown}
-role="button"
-tabindex="0"
+    class="h-full w-full bg-background/80 backdrop-blur-sm cursor-default"  
+    transition:fade={{ duration: 200 }}
+    onclick={handleOutsideClick}
+    onkeydown={handleKeydown}
+    role="button"
+    tabindex="0"
 >
-<div class="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
-    <Card.Root class="w-[90vw] max-w-[400px]">
-        <Card.Header>
-            <Card.Title>Questionnaire</Card.Title>
-            <Card.Description>
-                Répondez à ces quelques questions pour commencer.
-            </Card.Description>
-        </Card.Header>
-        <Card.Content>
-            <form onsubmit={e => { e.preventDefault(); handleSubmit(); }} class="space-y-6">
-                <p class="text-lg leading-relaxed">
-                    J'aimerais 
-                    <SelectionDropdown
-                        value={formState.typeAction}
-                        options={typeActionOptions}
-                        onChange={value => updateField('typeAction', value)}
-                    />
-                    {#if formState.typeBien === "maison"}une{:else}un{/if}
-                    <SelectionDropdown
-                        value={formState.typeBien}
-                        options={typeBienOptions}
-                        onChange={value => updateField('typeBien', value)}
-                    />
-                    dans {#if formState.localisationType === "village"}un {:else}une {/if}
-                    <SelectionDropdown
-                        value={formState.localisationType}
-                        options={localisationTypeOptions}
+    <div class="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <Card.Root class="w-[90vw] max-w-[400px]">
+            <Card.Header>
+                <Card.Title>Questionnaire</Card.Title>
+                <Card.Description>
+                    Répondez à ces quelques questions pour commencer.
+                </Card.Description>
+            </Card.Header>
+            <Card.Content>
+                <form onsubmit={e => { e.preventDefault(); handleSubmit(); }} class="space-y-6">
+                    <p class="text-lg leading-relaxed">
+                        J'aimerais 
+                        <SelectionDropdown
+                            value={formState.typeAction}
+                            options={typeActionOptions}
+                            onChange={value => updateField('typeAction', value)}
+                        />
+                        {#if formState.typeBien === "maison"}une{:else}un{/if}
+                        <SelectionDropdown
+                            value={formState.typeBien}
+                            options={typeBienOptions}
+                            onChange={value => updateField('typeBien', value)}
+                        />
+                        dans {#if formState.localisationType === "village"}un {:else}une {/if}
+                        <SelectionDropdown
+                            value={formState.localisationType}
+                            options={localisationTypeOptions}
+                            onChange={value => updateField('localisationType', value)}
+                        />
+                        {#if formState.localisationType === "village"}situé {:else}située {/if} au
+                        <MultiSelectionDropdown
+                            values={formState.cardinalite}
+                            options={cardinaliteOptions}
+                            onChange={values => updateField('cardinalite', values)}
+                        />
+                    </p>
 
-                        onChange={value => updateField('localisationType', value)}
-                    />
-                    {#if formState.localisationType === "village"}situé {:else}située {/if} au
-                    <MultiSelectionDropdown
-                        values={formState.cardinalite}
-                        options={cardinaliteOptions}
-                        onChange={values => updateField('cardinalite', values)}
+                    <p class="text-lg leading-relaxed">
+                        {#if formState.metiers.length > 1}Nous sommes{:else}Je suis{/if}
+                        <MultiSelectionDropdown
+                            values={formState.metiers}
+                            options={metiersOptions}
+                            onChange={values => updateField('metiers', values)}
+                        />
+                        et j'aime
+                        <MultiSelectionDropdown
+                            values={formState.loisirs}
+                            options={loisirsOptions}
+                            onChange={values => updateField('loisirs', values)}
+                        />
+                    </p>
 
-                    />
-                </p>
-
-                <p class="text-lg leading-relaxed">
-                    {#if formState.metiers.length > 1}Nous sommes{:else}Je suis{/if}
-                    <MultiSelectionDropdown
-                        values={formState.metiers}
-                        options={metiersOptions}
-                        onChange={values => updateField('metiers', values)}
-                    />
-                    et j'aime
-                    <MultiSelectionDropdown
-                        values={formState.loisirs}
-                        options={loisirsOptions}
-                        onChange={values => updateField('loisirs', values)}
-                    />
-                </p>
-
-                <Button type="submit" class="w-full">Rechercher</Button>
-            </form>
-        </Card.Content>
-    </Card.Root>
-</div>
+                    <Button type="submit" class="w-full">Rechercher</Button>
+                </form>
+            </Card.Content>
+        </Card.Root>
+    </div>
 </div>
