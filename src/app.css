@@ -1,110 +1,70 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import '@fontsource/fira-mono';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 155 36% 100%;
+    --foreground: 155 71% 1%;
+    --muted: 155 5% 95%;
+    --muted-foreground: 155 8% 33%;
+    --popover: 155 36% 100%;
+    --popover-foreground: 155 71% 1%;
+    --card: 155 36% 100%;
+    --card-foreground: 155 71% 1%;
+    --border: 155 13% 90%;
+    --input: 155 13% 90%;
+    --primary: 155 58% 29%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 155 14% 80%;
+    --secondary-foreground: 155 14% 20%;
+    --accent: 155 23% 71%;
+    --accent-foreground: 155 23% 11%;
+    --destructive: 8 87% 43%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 155 58% 29%;
+    --chart-1: 155 58% 29%;
+    --chart-2: 155 14% 80%;
+    --chart-3: 155 23% 71%;
+    --chart-4: 155 14% 83%;
+    --chart-5: 155 61% 29%;
+    --radius: 0.5rem;
+  }
 
-:root {
-	--font-body: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-	--font-mono: 'Fira Mono', monospace;
-	--color-bg-0: rgb(202, 216, 228);
-	--color-bg-1: hsl(209, 36%, 86%);
-	--color-bg-2: hsl(224, 44%, 95%);
-	--color-theme-1: #ff3e00;
-	--color-theme-2: #4075a6;
-	--color-text: rgba(0, 0, 0, 0.7);
-	--column-width: 42rem;
-	--column-margin-top: 4rem;
-	font-family: var(--font-body);
-	color: var(--color-text);
+  .dark {
+    --background: 155 30% 0%;
+    --foreground: 155 29% 98%;
+    --muted: 155 5% 5%;
+    --muted-foreground: 155 8% 67%;
+    --popover: 155 30% 0%;
+    --popover-foreground: 155 29% 98%;
+    --card: 155 30% 0%;
+    --card-foreground: 155 29% 98%;
+    --border: 155 13% 15%;
+    --input: 155 13% 15%;
+    --primary: 155 58% 29%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 155 10% 18%;
+    --secondary-foreground: 155 10% 78%;
+    --accent: 155 19% 25%;
+    --accent-foreground: 155 19% 85%;
+    --destructive: 8 87% 49%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 155 58% 29%;
+    --chart-1: 155 58% 29%;
+    --chart-2: 155 10% 18%;
+    --chart-3: 155 19% 25%;
+    --chart-4: 155 10% 21%;
+    --chart-5: 155 61% 29%;
+  }
 }
 
-body {
-	min-height: 100vh;
-	margin: 0;
-	background-attachment: fixed;
-	background-color: var(--color-bg-1);
-	background-size: 100vw 100vh;
-	background-image: radial-gradient(
-			50% 50% at 50% 50%,
-			rgba(255, 255, 255, 0.75) 0%,
-			rgba(255, 255, 255, 0) 100%
-		),
-		linear-gradient(180deg, var(--color-bg-0) 0%, var(--color-bg-1) 15%, var(--color-bg-2) 50%);
-}
-
-h1,
-h2,
-p {
-	font-weight: 400;
-}
-
-p {
-	line-height: 1.5;
-}
-
-a {
-	color: var(--color-theme-1);
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-
-h1 {
-	font-size: 2rem;
-	text-align: center;
-}
-
-h2 {
-	font-size: 1rem;
-}
-
-pre {
-	font-size: 16px;
-	font-family: var(--font-mono);
-	background-color: rgba(255, 255, 255, 0.45);
-	border-radius: 3px;
-	box-shadow: 2px 2px 6px rgb(255 255 255 / 25%);
-	padding: 0.5em;
-	overflow-x: auto;
-	color: var(--color-text);
-}
-
-.text-column {
-	display: flex;
-	max-width: 48rem;
-	flex: 0.6;
-	flex-direction: column;
-	justify-content: center;
-	margin: 0 auto;
-}
-
-input,
-button {
-	font-size: inherit;
-	font-family: inherit;
-}
-
-button:focus:not(:focus-visible) {
-	outline: none;
-}
-
-@media (min-width: 720px) {
-	h1 {
-		font-size: 2.4rem;
-	}
-}
-
-.visually-hidden {
-	border: 0;
-	clip: rect(0 0 0 0);
-	height: auto;
-	margin: 0;
-	overflow: hidden;
-	padding: 0;
-	position: absolute;
-	width: 1px;
-	white-space: nowrap;
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
