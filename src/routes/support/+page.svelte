@@ -61,7 +61,13 @@
         <h2 class="text-2xl font-bold mb-8">Nous contacter</h2>
         <Card.Root>
             <Card.Content>
-                <form on:submit|preventDefault={handleSubmit} class="space-y-4">
+                <form 
+                    onsubmit={(e) => {
+                        e.preventDefault();
+                        handleSubmit();
+                    }} 
+                    class="space-y-4"
+                >
                     <div class="space-y-2">
                         <label for="name">Nom complet</label>
                         <input

@@ -56,7 +56,9 @@
                 {#each contactInfo as info}
                     <div class="flex flex-col items-center p-4 text-center">
                         <div class="mb-4 rounded-full bg-primary/10 p-2">
-                            <svelte:component this={info.icon} class="h-6 w-6 text-primary" />
+                            {#if info.icon}
+                                <info.icon class="h-6 w-6 text-primary" />
+                            {/if}
                         </div>
                         <h3 class="mb-2 font-semibold">{info.title}</h3>
                         {#if info.link}
@@ -94,7 +96,13 @@
                     </Card.Description>
                 </Card.Header>
                 <Card.Content>
-                    <form on:submit|preventDefault={handleSubmit} class="space-y-4">
+                    <form 
+                        onsubmit={(e) => {
+                            e.preventDefault();
+                            handleSubmit();
+                        }} 
+                        class="space-y-4"
+                    >
                         <div class="space-y-2">
                             <label for="name">Nom complet</label>
                             <input
