@@ -62,14 +62,14 @@
 </script>
 
 <div 
-    class="h-full w-full bg-background/80 backdrop-blur-sm cursor-default"  
-    transition:fade={{ duration: 200 }}
+    class="h-full w-full bg-background/95"  
+    transition:fade={{ duration: 150 }}
     onclick={handleOutsideClick}
     onkeydown={handleKeydown}
     role="button"
     tabindex="0"
 >
-    <div class="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+    <div class="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] will-change-transform">
         <Card.Root class="w-[90vw] max-w-[400px]">
             <Card.Header>
                 <Card.Title>Questionnaire</Card.Title>
