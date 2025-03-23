@@ -18,10 +18,9 @@
 	import LifestyleFeatures from "$lib/components/LifestyleFeatures.svelte";
 	import Separator from "$lib/components/Separator.svelte";
 	import Testimonials from "$lib/components/Testimonials.svelte";
-	let interval: ReturnType<typeof setInterval>;
+
 	let begin = $state(false);
 	
-	// Utiliser $derived pour les calculs
 	const jobs = ["médecin", "boulanger", "épicier"] as const;
 	let currentJobIndex = $state(0);
 	const currentJob = $derived(jobs[currentJobIndex % jobs.length]);
@@ -35,21 +34,22 @@
 	let metiersResult: string[] = [];
 	let loisirsResult: string[] = [];
 
-	const startInterval = () => {
-		// Nettoyer l'intervalle existant si présent
-		if (interval) clearInterval(interval);
-		
-		interval = setInterval(() => {
-			currentJobIndex = (currentJobIndex + 1) % jobs.length;
-		}, 2000);
+	// Utilisation de requestAnimationFrame pour une animation plus fluide
+	let animationFrameId: number;
+	let lastUpdate = 0;
+	const UPDATE_INTERVAL = 2000; // 2 secondes
 
-		return interval;
+	function updateJob(timestamp: number) {
+		if (!lastUpdate) lastUpdate = timestamp;
+		const elapsed = timestamp - lastUpdate;
+
+		if (elapsed >= UPDATE_INTERVAL) {
+			currentJobIndex++;
+			lastUpdate = timestamp;
+		}
+
+		animationFrameId = requestAnimationFrame(updateJob);
 	}
-
-	// Nettoyer l'intervalle quand le composant est détruit
-	onDestroy(() => {
-		if (interval) clearInterval(interval);
-	});
 
 	function handleSubmit() {
 		console.log({
@@ -79,8 +79,15 @@
 	}
 
 	onMount(() => {
+		if (browser) {
+			animationFrameId = requestAnimationFrame(updateJob);
+		}
 		document.addEventListener('keydown', handleKeydown);
+		
 		return () => {
+			if (animationFrameId) {
+				cancelAnimationFrame(animationFrameId);
+			}
 			document.removeEventListener('keydown', handleKeydown);
 		};
 	});
@@ -105,20 +112,12 @@
 				<div class="flex flex-col items-center justify-center min-h-[120px] mb-16">
 					<span class="inline-flex items-center gap-2 font-bold text-4xl">
 						Vous êtes
-						{#each jobs as job, i}
-							{#if i === currentJobIndex}
-								<span class="text-4xl font-bold tracking-[-0.02em] text-black dark:text-white md:text-7xl md:leading-[5rem] will-change-transform">
-									<WordsPullUp words={job} />
-								</span>
-							{/if}
-						{/each}
+						<span class="text-4xl font-bold tracking-[-0.02em] text-black dark:text-white md:text-7xl md:leading-[5rem] will-change-transform gpu-accelerate">
+							<WordsPullUp words={currentJob}/>
+						</span>
 						?
 					</span>
 				</div>
-
-				{#if browser}
-					{@const interval = startInterval()}
-				{/if}
 
 				<div class="flex items-center justify-center">
 					{#if !begin}
@@ -149,3 +148,11 @@
 </main>
 
 <Footer />
+
+<style>
+	.gpu-accelerate {
+		transform: translateZ(0);
+		backface-visibility: hidden;
+		perspective: 1000px;
+	}
+</style>
