@@ -1,28 +1,28 @@
 <script lang="ts">
-    import { cn } from "$lib/utils";
-    import { Motion } from "svelte-motion";
-  
-    export let words='Pull Up';
-    export let wrapperFramerProps = {
-      hidden: { opacity: 0 },
-      show: {
-        opacity: 1,
-        transition: {
-          staggerChildren: 0.25,
-        },
+  import { cn } from "$lib/utils";
+  import { Motion } from "svelte-motion";
+
+  let { words = 'Pull Up', class: className = "" } = $props();
+
+  const wrapperFramerProps = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.25,
       },
-    };
-    export let framerProps = {
-      hidden: { y: 20, opacity: 0 },
-      show: { y: 0, opacity: 1 },
-    };
-  
-    let className: any = "";
-    export { className as class };
-  
-    let wordSplit = words.split(" ");
-  </script>
-  
+    },
+  };
+
+  const framerProps = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 },
+  };
+
+  let wordSplit = $derived(words.split(" "));
+</script>
+
+{#key words}
   <Motion
     variants={wrapperFramerProps}
     initial="hidden"
@@ -38,7 +38,7 @@
     >
       {#each wordSplit as word, i}
         <Motion variants={framerProps} let:motion>
-          <span class="inline-block pr-[0px]" use:motion>
+          <span class="inline-block pr-[8px]" use:motion>
             {#if word === ""}
               <span>&nbsp;</span>
             {:else}
@@ -49,4 +49,4 @@
       {/each}
     </h1>
   </Motion>
-  
+{/key}
