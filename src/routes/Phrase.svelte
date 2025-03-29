@@ -9,6 +9,7 @@
     import { formState, updateField } from './formState.svelte';
     import SelectionDropdown from '$lib/components/SelectionDropdown.svelte';
     import MultiSelectionDropdown from '$lib/components/MultiSelectionDropdown.svelte';
+    import { goto } from '$app/navigation';
 
     let { begin = $bindable() } = $props();
     let typeAction = $state("");
@@ -34,6 +35,9 @@
 			metiersResult,
 			loisirsResult
 		});
+        
+        // Rediriger vers la page de carte
+        goto('/map');
 	}
 
 	function handleClose() {
