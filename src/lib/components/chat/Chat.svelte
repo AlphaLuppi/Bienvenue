@@ -39,12 +39,26 @@
 
 <div 
     class={cn(
-        "absolute left-4 top-4 bottom-4 w-full md:w-[400px] bg-background border-r flex flex-col transition-all duration-300 rounded-lg shadow-lg",
-        chatState.isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0 md:opacity-0"
+        "absolute left-4 top-4 bottom-4 w-full md:w-[400px] bg-background border flex flex-col transition-all duration-300 rounded-lg shadow-lg",
+        chatState.isOpen 
+            ? "translate-x-0 opacity-100" 
+            : "-translate-x-full md:translate-x-0 md:opacity-100"
     )} 
     style="z-index: 1000;"
-    transition:fly|local={{ x: -300, duration: 300 }}
+    transition:fly|local={{ x: -300, duration: 300, opacity: 1 }}
 >
+    <div class="flex items-center justify-between p-4 border-b">
+        <h2 class="text-lg font-semibold">Assistant</h2>
+        <Button 
+            variant="ghost" 
+            size="icon" 
+            class="md:hidden"
+            onclick={() => chatState.isOpen = false}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </Button>
+    </div>
+
     <ScrollArea class="flex-1 p-4">
         <div class="flex flex-col gap-4">
             {#each chatState.messages as msg}

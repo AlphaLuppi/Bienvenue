@@ -1,6 +1,6 @@
 import type { ChatMessage } from '$lib/types/map';
 
-let isOpen = $state(false);
+let isOpen = $state(window?.innerWidth >= 768 || false);
 let messages = $state<ChatMessage[]>([
     {
         id: 1,
