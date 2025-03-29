@@ -23,28 +23,30 @@ export const actions: Actions = {
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
-		//Managing OAuth login
-		const provider = url.searchParams.get('provider') as Provider;
-		if (provider) {
-			const { data, error: err } = await supabase.auth.signInWithOAuth({
-				provider: provider
-			});
-			if (err) {
-				console.log(err);
-				return fail(400, {
-					message: "Une erreur d'authentification est survenue."
-				});
-			}
-			console.log(data.url);
-			throw redirect(303, data.url);
-		}
-
 		const { error } = await supabase.auth.signInWithPassword({ email, password });
 		if (error) {
 			console.error(error);
 			redirect(303, '/signin/error');
 		} else {
 			redirect(303, '/account');
+		}
+	},
+
+	oauth: async ({ request, locals: { supabase } }) => {
+		const formData = await request.formData();
+		const provider = formData.get('provider') as Provider;
+		
+		const { data, error } = await supabase.auth.signInWithOAuth({
+			provider,
+			options: {
+				redirectTo: `${new URL(request.url).origin}/auth/callback`
+			}
+		});
+		
+		if (data.url) {
+			redirect(303, data.url);
+		} else {
+			console.error(error);
 		}
 	}
 };
