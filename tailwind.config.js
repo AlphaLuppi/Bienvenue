@@ -5,7 +5,7 @@ export default {
     './pages/**/*.{ts,tsx,svelte}',
     './components/**/*.{ts,tsx,svelte}',
     './app/**/*.{ts,tsx,svelte}',
-    './src/**/*.{ts,tsx,svelte}',
+    "./src/**/*.{html,js,svelte,ts}",
   ],
   theme: {
     container: {
@@ -89,14 +89,20 @@ export default {
             transform: "translateY(calc(-50% - var(--gap)))",
           },
         },
+        "border-beam": {
+          "100%": {
+            "offset-distance": "100%"
+          }
+        }
       },
       animation: {
         "marker-pulse": "marker-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "text-gradient": "text-gradient 8s linear infinite",
         "marquee": "marquee var(--duration) linear infinite",
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
+        "border-beam": "border-beam calc(var(--duration)*1s) infinite linear"
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("flowbite/plugin")],
 } 
