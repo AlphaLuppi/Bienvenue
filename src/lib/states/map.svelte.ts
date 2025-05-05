@@ -7,6 +7,7 @@ export const mapState = $state({
         main: {
             lat: 47.0810,
             lng: 2.3987,
+            id: "1",
             title: "Opportunité à Bourges",
             type: "main" as const
         },
