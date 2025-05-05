@@ -3,7 +3,9 @@
     import { fade } from 'svelte/transition';
     import type { Map, Marker as LeafletMarker, DivIcon } from 'leaflet';
     import { mapState } from '$lib/states/map.svelte';
-    import type { MarkerType } from '$lib/types/map';
+    import type { MarkerType, LocationData } from '$lib/types/map';
+    import HousingCard from "$lib/components/ui/housing-card/housing-card.svelte";
+    import SolutionToolbar from "$lib/components/map/SolutionToolbar.svelte";
 
     let { center, zoom } = $props<{
         center: [number, number];
@@ -14,6 +16,12 @@
     let mainMarker: LeafletMarker;
     let subMarkers: LeafletMarker[] = [];
     let L: any;
+
+    // État pour gérer le popover
+    let activeLocation = $state<LocationData | null>(null);
+    let popoverPosition = $state<{ x: number; y: number } | null>(null);
+    let activeMarkerLatLng = $state<L.LatLng | null>(null);
+    let popoverRef = $state<HTMLDivElement | null>(null);
 
     const ZOOM_THRESHOLD = 10;
 
@@ -53,10 +61,48 @@
         subMarkers.forEach(marker => marker.remove());
         mainMarker?.addTo(map);
         
-        map.flyTo(mainMarker.getLatLng(), ZOOM_THRESHOLD - 1, {
+        // Fermer les popups
+        closeDetails();
+        
+        map.flyTo(mainMarker.getLatLng(), ZOOM_THRESHOLD - 4, {
             duration: 0.5,
             easeLinearity: 0.5
         });
+    }
+
+    function handleMarkerClick(event: { latlng: L.LatLng }, location: LocationData) {
+        if (location.type === 'main' && !mapState.isExpanded) {
+            expand();
+            return;
+        }
+        
+        if (location.type !== 'main') {
+            activeMarkerLatLng = event.latlng;
+            updatePopoverPosition();
+            activeLocation = location;
+        }
+    }
+
+    function updatePopoverPosition() {
+        if (!map || !activeMarkerLatLng) return;
+        
+        const point = map.latLngToContainerPoint(activeMarkerLatLng);
+        popoverPosition = {
+            x: point.x,
+            y: point.y - 20
+        };
+    }
+
+    function closeDetails() {
+        activeLocation = null;
+        popoverPosition = null;
+        activeMarkerLatLng = null;
+    }
+
+    function handleMapClick() {
+        if (activeLocation) {
+            closeDetails();
+        }
     }
 
     function initializeMarkers() {
@@ -69,18 +115,21 @@
         mainMarker = L.marker([main.lat, main.lng], {
             icon: mainIcon
         })
-        .bindPopup(main.title)
         .addTo(map)
-        .on('click', expand);
+        .on('click', (e: L.LeafletMouseEvent) => handleMarkerClick(e, main));
 
         // Initialiser les sous-marqueurs
         Object.values(sub).forEach(location => {
             const icon = createCustomIcon(location.type);
             const marker = L.marker([location.lat, location.lng], {
                 icon
-            }).bindPopup(location.title);
+            })
+            .on('click', (e: L.LeafletMouseEvent) => handleMarkerClick(e, location));
             subMarkers.push(marker);
         });
+
+        // Ajouter un gestionnaire de clic sur la carte
+        map.on('click', handleMapClick);
     }
 
     function leafletMap(node: HTMLElement) {
@@ -108,6 +157,9 @@
                     collapse();
                 }
             });
+
+            // Mettre à jour la position du popover lors du déplacement de la carte
+            map.on('move', updatePopoverPosition);
         }
 
         initMap();
@@ -125,13 +177,60 @@
     });
 </script>
 
-<div 
-    class="w-full h-full z-10 bg-gray-100 min-h-[400px] relative"
-    use:leafletMap
->
+<div class="relative w-full h-full">
+    <div 
+        class="w-full h-full z-10 bg-gray-100 min-h-[400px] relative"
+        use:leafletMap
+    />
+
+    {#if activeLocation && popoverPosition}
+        <div 
+            bind:this={popoverRef}
+            class="absolute z-40 w-[300px] bg-white rounded-lg shadow-lg overflow-visible"
+            style="left: {popoverPosition.x}px; top: {popoverPosition.y}px; transform: translate(-50%, -100%) translateY(-10px);"
+            transition:fade={{ duration: 200 }}
+        >
+            <div class="relative">
+                <button
+                    class="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/80 flex items-center justify-center text-gray-600 hover:bg-white transition-colors z-10"
+                    onclick={closeDetails}
+                >✕</button>
+
+                {#if activeLocation.type === 'housing'}
+                    <HousingCard
+                        images={[
+                            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+                            "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688",
+                            "https://images.unsplash.com/photo-1566073771259-6a8506099945",
+                            "https://images.unsplash.com/photo-1512917774080-9991f1c4c750"
+                        ]}
+                        title={activeLocation.title}
+                        location="Le Marais, Paris"
+                        price={150}
+                        rating={4.8}
+                        reviews={128}
+                    />
+                {:else}
+                    <div class="p-4">
+                        <h3 class="font-semibold mb-2">{activeLocation.title}</h3>
+                        <p class="text-gray-600">Type: {activeLocation.type}</p>
+                    </div>
+                {/if}
+            </div>
+        </div>
+    {/if}
+
+    <div class="absolute inset-0 pointer-events-none z-50">
+        <SolutionToolbar 
+            isVisible={mapState.isExpanded} 
+            solutionId={mapState.solutionData.main.id}
+            solutionData={mapState.solutionData}
+        />
+    </div>
+
     {#if mapState.isExpanded}
         <button 
-            class="absolute top-5 right-5 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 text-lg shadow-md hover:bg-gray-100 hover:scale-110 transition-all duration-300 z-[9999]"
+            class="absolute top-5 right-5 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 text-lg shadow-md hover:bg-gray-100 hover:scale-110 transition-all duration-300 z-50"
             onclick={collapse}
             transition:fade
         >✕</button>
