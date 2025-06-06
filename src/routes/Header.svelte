@@ -1,129 +1,72 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { cn } from '$lib/utils';
+	import { AlignJustify, XIcon } from 'lucide-svelte';
+	import { fly } from 'svelte/transition';
+	import logo from '$lib/images/bienvenue_logo_preview.png';
+	
+	const MENU_ITEMS = [
+		{ id: 'connection', label: 'Connexion', href: '/signin' },
+		{ id: 'inscription', label: 'Inscription', href: '/signup' }
+	] as const;
+
+	let hamburgerMenuIsOpen = $state(false);
+
+	function toggleOverflowHidden(node: HTMLElement) {
+		node.addEventListener('click', () => {
+			hamburgerMenuIsOpen = !hamburgerMenuIsOpen;
+			const html = document.querySelector('html');
+			if (html) {
+				html.classList.toggle('overflow-hidden', hamburgerMenuIsOpen);
+			}
+		});
+	}
 </script>
 
-<header>
-	<div class="corner">
-		<a href="https://svelte.dev/docs/kit">
-			<img src={logo} alt="SvelteKit" />
+<header class="fixed left-0 top-0 z-50 w-full border-b bg-background">
+	<div class="container flex h-14 items-center justify-between">
+		<a href="/" class="flex items-center">
+			<img src={logo} alt="Bienvenue" class="h-8 w-auto md:h-auto md:w-48" />
 		</a>
-	</div>
 
-	<nav>
-		<svg viewBox="0 0 2 3" aria-hidden="true">
-			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
-		</svg>
-		<ul>
-			<li aria-current={page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">Home</a>
-			</li>
-			<li aria-current={page.url.pathname === '/about' ? 'page' : undefined}>
-				<a href="/about">About</a>
-			</li>
-			<li aria-current={page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
-				<a href="/sverdle">Sverdle</a>
-			</li>
-		</ul>
-		<svg viewBox="0 0 2 3" aria-hidden="true">
-			<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
-		</svg>
-	</nav>
+		<div class="ml-auto hidden md:flex h-full items-center">
+			<Button variant="outline" class="mr-6 text-sm" href="/signin">Se connecter</Button>
+			<Button variant="default" class="mr-6 text-sm" href="/signup">S'inscrire</Button>
+		</div>
 
-	<div class="corner">
-		<a href="https://github.com/sveltejs/kit">
-			<img src={github} alt="GitHub" />
-		</a>
+		<button class="ml-6 md:hidden" use:toggleOverflowHidden>
+			<span class="sr-only">Toggle menu</span>
+			{#if hamburgerMenuIsOpen}
+				<XIcon strokeWidth={1.4} class="text-gray-300"/>
+			{:else}
+				<AlignJustify strokeWidth={1.4} class="text-gray-300" />
+			{/if}
+		</button>
 	</div>
 </header>
 
-<style>
-	header {
-		display: flex;
-		justify-content: space-between;
-	}
+{#if hamburgerMenuIsOpen}
+	<nav class="fixed inset-0 z-50 bg-background">
+		<div class="container flex h-14 items-center justify-between">
+			<a href="/" class="flex items-center">
+				<img src={logo} alt="Bienvenue" class="h-8 w-auto md:h-auto md:w-48" />
+			</a>
+			<button class="md:hidden" use:toggleOverflowHidden>
+				<span class="sr-only">Toggle menu</span>
+				<XIcon strokeWidth={1.4} class="text-gray-300"/>
+			</button>
+		</div>
 
-	.corner {
-		width: 3em;
-		height: 3em;
-	}
-
-	.corner a {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		height: 100%;
-	}
-
-	.corner img {
-		width: 2em;
-		height: 2em;
-		object-fit: contain;
-	}
-
-	nav {
-		display: flex;
-		justify-content: center;
-		--background: rgba(255, 255, 255, 0.7);
-	}
-
-	svg {
-		width: 2em;
-		height: 3em;
-		display: block;
-	}
-
-	path {
-		fill: var(--background);
-	}
-
-	ul {
-		position: relative;
-		padding: 0;
-		margin: 0;
-		height: 3em;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		list-style: none;
-		background: var(--background);
-		background-size: contain;
-	}
-
-	li {
-		position: relative;
-		height: 100%;
-	}
-
-	li[aria-current='page']::before {
-		--size: 6px;
-		content: '';
-		width: 0;
-		height: 0;
-		position: absolute;
-		top: 0;
-		left: calc(50% - var(--size));
-		border: var(--size) solid transparent;
-		border-top: var(--size) solid var(--color-theme-1);
-	}
-
-	nav a {
-		display: flex;
-		height: 100%;
-		align-items: center;
-		padding: 0 0.5rem;
-		color: var(--color-text);
-		font-weight: 700;
-		font-size: 0.8rem;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		text-decoration: none;
-		transition: color 0.2s linear;
-	}
-
-	a:hover {
-		color: var(--color-theme-1);
-	}
-</style>
+		<div class="container">
+			<ul in:fly={{ y: -30, duration: 400 }} class="flex flex-col space-y-4 pt-4">
+				{#each MENU_ITEMS as item (item.id)}
+					<li class="border-b border-gray-200 py-2">
+						<a href={item.href} class="block text-lg hover:text-primary">
+							{item.label}
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</nav>
+{/if}

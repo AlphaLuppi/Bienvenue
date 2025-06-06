@@ -1,0 +1,1 @@
+export { default as HousingCard } from "./housing-card.svelte"; 
