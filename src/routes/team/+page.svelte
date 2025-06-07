@@ -6,19 +6,19 @@
             name: "Gabriel DESBOUIS",
             role: "CEO & Co-fondatrice",
             bio: "Passionné par l'impact social et le développement territorial. Il a a coeur de mettre en place des solutions innovantes pour améliorer la qualité de vie des citoyens.",
-            image: "https://media.licdn.com/dms/image/v2/D4E03AQF56lR0Nt2dhA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1694617238821?e=1747267200&v=beta&t=XcGV3cMqgA_uky-vHktONh6DNnb2zXkhv0-W0LHl0SA"
+            image: "https://media.licdn.com/dms/image/v2/D4E03AQF56lR0Nt2dhA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1694617238821?e=1753920000&v=beta&t=RXNfwiEnvcvAdR4BTZHsDZpLNWsX8XnN12_ga7A3_2E"
         },
         {
             name: "Nicolas BATAILLE",
             role: "Responsable IA & Co-fondateur",
             bio: "Diplômé en informatique et en intelligence artificielle, il a une passion pour la technologie et l'innovation. Il est expert en IA et en machine learning.",
-            image: "https://media.licdn.com/dms/image/v2/D4D03AQHNx6WGLaY9Og/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1727775544457?e=1747267200&v=beta&t=rLswmhn9cfLC34NsY6LbPrnhmlaHCBlr93TSNZ7M27w"
+            image: "https://media.licdn.com/dms/image/v2/D4D03AQHNx6WGLaY9Og/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1727775544457?e=1753920000&v=beta&t=wq4QpFOcWBGG-G6vOm7tpNdX7l_fMA8yfgvlmzDOj0Q"
         },
         {
             name: "Thomas SATORY",
             role: "CTO & Co-fondateur",
             bio: "Spécialiste informatique et des technologies de l'information et de la communication.",
-            image: "https://media.licdn.com/dms/image/v2/D4D03AQG6DB4yPvnLiQ/profile-displayphoto-shrink_100_100/profile-displayphoto-shrink_100_100/0/1724868202424?e=1747267200&v=beta&t=zZF_iOSbXMRSP9DzGlZUOpzUeD1omI83-52J7o2QRbo"
+            image: "https://media.licdn.com/dms/image/v2/D4D03AQG6DB4yPvnLiQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1724868202459?e=1753920000&v=beta&t=KN5BkKFsGPNyzsP-GRD1WbhZhQ6pPKof5XXhGVyzm-M"
         }
     ];
 </script>
@@ -31,18 +31,18 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-1 gap-16 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="flex flex-wrap justify-center gap-12">
         {#each team as member}
-            <div class="text-center">
-                <div class="relative">
+            <div class="flex flex-col items-center w-full sm:w-1/2 lg:w-1/4 max-w-xs">
+                <div class="relative w-40 h-40">
                     <img
                         src={member.image}
                         alt={member.name}
-                        class="mx-auto h-48 w-48 rounded-full object-cover"
+                        class="rounded-full object-cover w-full h-full border-4 border-primary/10"
                     />
-                    <div class="absolute inset-0 rounded-full ring-4 ring-primary/10"></div>
+                    <div class="absolute inset-0 rounded-full ring-4 ring-primary/10 pointer-events-none"></div>
                 </div>
-                <div class="mt-4">
+                <div class="mt-4 text-center">
                     <h3 class="text-lg font-semibold">{member.name}</h3>
                     <p class="text-sm text-primary">{member.role}</p>
                     <p class="mt-2 text-sm text-muted-foreground">{member.bio}</p>
