@@ -22,4 +22,6 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 package-lock.json
-
+Svelte.pdf
+.cursor/rules/bienvenue.mdc
+package-lock.json
