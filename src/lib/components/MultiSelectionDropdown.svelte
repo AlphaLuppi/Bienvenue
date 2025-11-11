@@ -4,7 +4,7 @@
     export let values: string[] = [];
     export let options: string[] = [];
     export let onChange: (values: string[]) => void;
-    export let placeholder = "chosissez";
+    export let placeholder = "choisissez";
 
     function toggleOption(option: string) {
         if (values.includes(option)) {
