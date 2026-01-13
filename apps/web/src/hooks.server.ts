@@ -4,10 +4,17 @@ import { env } from '$env/dynamic/private';
 
 const API_BASE_URL = env.API_URL || 'http://localhost:3000';
 
+interface UserProfile {
+	username: string | null;
+	fullName: string | null;
+	avatarUrl: string | null;
+}
+
 interface AuthUser {
 	id: string;
 	email: string;
 	role: string;
+	profile: UserProfile | null;
 }
 
 const auth: Handle = async ({ event, resolve }) => {
@@ -21,21 +28,50 @@ const auth: Handle = async ({ event, resolve }) => {
 		}
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+			// Fetch user authentication data
+			const authResponse = await fetch(`${API_BASE_URL}/api/auth/me`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				}
 			});
 
-			if (!response.ok) {
+			if (!authResponse.ok) {
 				// Token is invalid, clear cookies
 				event.cookies.delete('access_token', { path: '/' });
 				event.cookies.delete('refresh_token', { path: '/' });
 				return null;
 			}
 
-			const data = await response.json();
-			return data.user as AuthUser;
+			const authData = await authResponse.json();
+			const user = authData.user as { id: string; email: string; role: string };
+
+			// Fetch user profile
+			let profile: UserProfile | null = null;
+			try {
+				const profileResponse = await fetch(`${API_BASE_URL}/api/profile`, {
+					headers: {
+						Authorization: `Bearer ${accessToken}`
+					}
+				});
+
+				if (profileResponse.ok) {
+					const profileData = await profileResponse.json();
+					if (profileData.profile) {
+						profile = {
+							username: profileData.profile.username,
+							fullName: profileData.profile.fullName,
+							avatarUrl: profileData.profile.avatarUrl
+						};
+					}
+				}
+			} catch {
+				// Profile fetch failed, continue with null profile
+			}
+
+			return {
+				...user,
+				profile
+			};
 		} catch {
 			return null;
 		}

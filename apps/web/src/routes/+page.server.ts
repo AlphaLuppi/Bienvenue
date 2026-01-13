@@ -5,15 +5,11 @@ import { authApi } from '$lib/api/client';
 
 export const prerender = false;
 
-export const load: PageServerLoad = async ({ url, locals: { safeGetSession } }) => {
-	const { session } = await safeGetSession();
-
-	// if the user is already logged in return them to the account page
-	if (session) {
-		console.log('Already logged in');
-	}
-
-	return { url: url.origin };
+export const load: PageServerLoad = async ({ url, locals }) => {
+	return {
+		url: url.origin,
+		user: locals.user
+	};
 };
 
 export const actions: Actions = {

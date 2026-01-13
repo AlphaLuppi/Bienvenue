@@ -120,7 +120,6 @@ export const profileApi = {
 		data: {
 			fullName?: string;
 			username?: string;
-			website?: string;
 			avatarUrl?: string;
 		}
 	) =>

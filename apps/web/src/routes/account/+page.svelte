@@ -16,20 +16,17 @@
 	// Derive initial values from props (reactive to data/form changes)
 	let profileFullName = $derived(form?.fullName ?? data.profile?.fullName ?? '');
 	let profileUsername = $derived(form?.username ?? data.profile?.username ?? '');
-	let profileWebsite = $derived(form?.website ?? data.profile?.website ?? '');
 	let profileAvatarUrl = $derived(form?.avatarUrl ?? data.profile?.avatarUrl ?? '');
 
 	// Form fields for editing
 	let fullName = $state('');
 	let username = $state('');
-	let website = $state('');
 	let avatarUrl = $state('');
 
 	// Sync form fields when profile data changes (on load or after form submission)
 	$effect.pre(() => {
 		fullName = profileFullName;
 		username = profileUsername;
-		website = profileWebsite;
 		avatarUrl = profileAvatarUrl;
 	});
 
@@ -54,15 +51,20 @@
 		successMessage = '';
 		errorMessage = '';
 
-		return async ({ result }) => {
+		return async ({ result, update }) => {
 			loading = false;
 
 			if (result.type === 'success') {
+				// Apply the result first to update form data
+				await update();
+				// Then set success message (after update completes)
 				successMessage = 'Profil mis à jour avec succès';
 				setTimeout(() => (successMessage = ''), 3000);
 			} else if (result.type === 'failure') {
-				errorMessage = 'Erreur lors de la mise à jour du profil';
+				errorMessage = result.data?.message || 'Erreur lors de la mise à jour du profil';
 				setTimeout(() => (errorMessage = ''), 5000);
+				// Still update to show the error data
+				await update();
 			}
 		};
 	};
@@ -139,17 +141,6 @@
 						type="text"
 						bind:value={username}
 						placeholder="@username"
-					/>
-				</div>
-
-				<div class="space-y-2">
-					<Label for="website">Site web</Label>
-					<Input
-						id="website"
-						name="website"
-						type="url"
-						bind:value={website}
-						placeholder="https://example.com"
 					/>
 				</div>
 

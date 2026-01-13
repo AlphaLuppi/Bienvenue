@@ -11,7 +11,7 @@ export class ProfileService {
 
 		const { data, error } = await supabase
 			.from('profiles')
-			.select('id, username, full_name, website, avatar_url, updated_at')
+			.select('id, username, full_name, avatar_url, updated_at')
 			.eq('id', userId)
 			.single();
 
@@ -28,7 +28,6 @@ export class ProfileService {
 				id: data.id,
 				username: data.username,
 				fullName: data.full_name,
-				website: data.website,
 				avatarUrl: data.avatar_url,
 				updatedAt: data.updated_at
 			}
@@ -44,7 +43,6 @@ export class ProfileService {
 				id: userId,
 				full_name: dto.fullName,
 				username: dto.username,
-				website: dto.website,
 				avatar_url: dto.avatarUrl,
 				updated_at: new Date().toISOString()
 			})
@@ -61,7 +59,6 @@ export class ProfileService {
 				id: data.id,
 				username: data.username,
 				fullName: data.full_name,
-				website: data.website,
 				avatarUrl: data.avatar_url,
 				updatedAt: data.updated_at
 			}

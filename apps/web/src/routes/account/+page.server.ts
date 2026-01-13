@@ -10,31 +10,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 		redirect(303, '/signin');
 	}
 
-	// Call NestJS API for profile data
-	const result = await profileApi.getProfile(token);
-
-	if (!result.success || !result.data) {
-		return { user, profile: null };
-	}
-
-	// Map API response to expected format
-	const apiProfile = result.data as {
-		profile: {
-			username: string | null;
-			fullName: string | null;
-			website: string | null;
-			avatarUrl: string | null;
-		};
-	};
-
+	// Profile is already loaded in hooks.server.ts as part of the user object
 	return {
 		user,
-		profile: {
-			username: apiProfile.profile.username,
-			fullName: apiProfile.profile.fullName,
-			website: apiProfile.profile.website,
-			avatarUrl: apiProfile.profile.avatarUrl
-		}
+		profile: user.profile
 	};
 };
 
@@ -43,7 +22,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const fullName = formData.get('fullName') as string;
 		const username = formData.get('username') as string;
-		const website = formData.get('website') as string;
 		const avatarUrl = formData.get('avatarUrl') as string;
 
 		const token = locals.getAccessToken();
@@ -56,7 +34,6 @@ export const actions: Actions = {
 		const result = await profileApi.updateProfile(token, {
 			fullName,
 			username,
-			website: website || undefined,
 			avatarUrl: avatarUrl || undefined
 		});
 
@@ -65,7 +42,6 @@ export const actions: Actions = {
 				message: result.error || 'Erreur lors de la mise à jour',
 				fullName,
 				username,
-				website,
 				avatarUrl
 			});
 		}
@@ -74,7 +50,6 @@ export const actions: Actions = {
 			success: true,
 			fullName,
 			username,
-			website,
 			avatarUrl
 		};
 	},

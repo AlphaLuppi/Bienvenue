@@ -11,9 +11,5 @@ export class UpdateProfileDto {
 
 	@IsUrl()
 	@IsOptional()
-	website?: string;
-
-	@IsUrl()
-	@IsOptional()
 	avatarUrl?: string;
 }

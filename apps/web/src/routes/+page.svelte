@@ -18,6 +18,9 @@
 	import LifestyleFeatures from "$lib/components/LifestyleFeatures.svelte";
 	import Separator from "$lib/components/Separator.svelte";
 	import Testimonials from "$lib/components/Testimonials.svelte";
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	let begin = $state(false);
 	
@@ -99,7 +102,7 @@
 	<meta name="description" content="Bienvenue est une plateforme permettant à n'importe quel citoyen de trouver une opportunité de nouvelle vie." />
 </svelte:head>
 
-<Header />
+<Header user={data.user} />
 
 <main class="relative">
 	<div class="relative h-[600px]">
