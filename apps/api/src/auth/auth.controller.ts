@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UseGuards, Get, Headers } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto, SignInDto, SignInWithOtpDto, OAuthDto } from './dto/auth.dto';
+import { SignUpDto, SignInDto, SignInWithOtpDto, OAuthDto, ExchangeCodeDto, VerifyOtpDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthenticatedUser } from './strategies/supabase-jwt.strategy';
@@ -27,6 +27,16 @@ export class AuthController {
 	@Post('oauth')
 	async getOAuthUrl(@Body() dto: OAuthDto) {
 		return this.authService.getOAuthUrl(dto.provider, dto.redirectUrl);
+	}
+
+	@Post('oauth/callback')
+	async exchangeCodeForSession(@Body() dto: ExchangeCodeDto) {
+		return this.authService.exchangeCodeForSession(dto.code);
+	}
+
+	@Post('verify-otp')
+	async verifyOtp(@Body() dto: VerifyOtpDto) {
+		return this.authService.verifyOtp(dto.tokenHash, dto.type);
 	}
 
 	@Post('signout')

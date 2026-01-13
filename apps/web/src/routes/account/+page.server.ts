@@ -1,19 +1,20 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { profileApi } from '$lib/api/client';
+import { profileApi, authApi } from '$lib/api/client';
 
-export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
-	const { session } = await safeGetSession();
+export const load: PageServerLoad = async ({ locals }) => {
+	const token = locals.getAccessToken();
+	const user = locals.user;
 
-	if (!session) {
-		redirect(303, '/');
+	if (!token || !user) {
+		redirect(303, '/signin');
 	}
 
 	// Call NestJS API for profile data
-	const result = await profileApi.getProfile(session.access_token);
+	const result = await profileApi.getProfile(token);
 
 	if (!result.success || !result.data) {
-		return { session, profile: null };
+		return { user, profile: null };
 	}
 
 	// Map API response to expected format
@@ -27,32 +28,32 @@ export const load: PageServerLoad = async ({ locals: { safeGetSession } }) => {
 	};
 
 	return {
-		session,
+		user,
 		profile: {
 			username: apiProfile.profile.username,
-			full_name: apiProfile.profile.fullName,
+			fullName: apiProfile.profile.fullName,
 			website: apiProfile.profile.website,
-			avatar_url: apiProfile.profile.avatarUrl
+			avatarUrl: apiProfile.profile.avatarUrl
 		}
 	};
 };
 
 export const actions: Actions = {
-	update: async ({ request, locals: { safeGetSession } }) => {
+	update: async ({ request, locals }) => {
 		const formData = await request.formData();
 		const fullName = formData.get('fullName') as string;
 		const username = formData.get('username') as string;
 		const website = formData.get('website') as string;
 		const avatarUrl = formData.get('avatarUrl') as string;
 
-		const { session } = await safeGetSession();
+		const token = locals.getAccessToken();
 
-		if (!session) {
-			return fail(401, { message: 'Not authenticated' });
+		if (!token) {
+			return fail(401, { message: 'Non authentifié' });
 		}
 
 		// Call NestJS API for profile update
-		const result = await profileApi.updateProfile(session.access_token, {
+		const result = await profileApi.updateProfile(token, {
 			fullName,
 			username,
 			website: website || undefined,
@@ -61,6 +62,7 @@ export const actions: Actions = {
 
 		if (!result.success) {
 			return fail(500, {
+				message: result.error || 'Erreur lors de la mise à jour',
 				fullName,
 				username,
 				website,
@@ -69,18 +71,26 @@ export const actions: Actions = {
 		}
 
 		return {
+			success: true,
 			fullName,
 			username,
 			website,
 			avatarUrl
 		};
 	},
-	signout: async ({ locals: { supabase, safeGetSession } }) => {
-		const { session } = await safeGetSession();
-		if (session) {
-			// Keep using Supabase directly for signout as it needs to clear cookies
-			await supabase.auth.signOut();
-			redirect(303, '/');
+
+	signout: async ({ locals, cookies }) => {
+		const token = locals.getAccessToken();
+
+		if (token) {
+			// Call backend to sign out
+			await authApi.signOut(token);
 		}
+
+		// Clear auth cookies
+		cookies.delete('access_token', { path: '/' });
+		cookies.delete('refresh_token', { path: '/' });
+
+		redirect(303, '/');
 	}
 };

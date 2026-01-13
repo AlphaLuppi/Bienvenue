@@ -1,81 +1,62 @@
-import { createServerClient } from '@supabase/ssr';
 import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
+import { env } from '$env/dynamic/private';
 
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public';
+const API_BASE_URL = env.API_URL || 'http://localhost:3000';
 
-const supabase: Handle = async ({ event, resolve }) => {
-	/**
-	 * Creates a Supabase client specific to this server request.
-	 *
-	 * The Supabase client gets the Auth token from the request cookies.
-	 */
-	event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-		cookies: {
-			getAll: () => event.cookies.getAll(),
-			/**
-			 * SvelteKit's cookies API requires `path` to be explicitly set in
-			 * the cookie options. Setting `path` to `/` replicates previous/
-			 * standard behavior.
-			 */
-			setAll: (cookiesToSet) => {
-				cookiesToSet.forEach(({ name, value, options }) => {
-					event.cookies.set(name, value, { ...options, path: '/' });
-				});
+interface AuthUser {
+	id: string;
+	email: string;
+	role: string;
+}
+
+const auth: Handle = async ({ event, resolve }) => {
+	const accessToken = event.cookies.get('access_token');
+
+	event.locals.getAccessToken = () => accessToken || null;
+
+	event.locals.getUser = async (): Promise<AuthUser | null> => {
+		if (!accessToken) {
+			return null;
+		}
+
+		try {
+			const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`
+				}
+			});
+
+			if (!response.ok) {
+				// Token is invalid, clear cookies
+				event.cookies.delete('access_token', { path: '/' });
+				event.cookies.delete('refresh_token', { path: '/' });
+				return null;
 			}
-		}
-	});
 
-	/**
-	 * Unlike `supabase.auth.getSession()`, which returns the session _without_
-	 * validating the JWT, this function also calls `getUser()` to validate the
-	 * JWT before returning the session.
-	 */
-	event.locals.safeGetSession = async () => {
-		const {
-			data: { session }
-		} = await event.locals.supabase.auth.getSession();
-		if (!session) {
-			return { session: null, user: null };
+			const data = await response.json();
+			return data.user as AuthUser;
+		} catch {
+			return null;
 		}
-
-		const {
-			data: { user },
-			error
-		} = await event.locals.supabase.auth.getUser();
-		if (error) {
-			// JWT validation has failed
-			return { session: null, user: null };
-		}
-
-		return { session, user };
 	};
 
-	return resolve(event, {
-		filterSerializedResponseHeaders(name) {
-			/**
-			 * Supabase libraries use the `content-range` and `x-supabase-api-version`
-			 * headers, so we need to tell SvelteKit to pass it through.
-			 */
-			return name === 'content-range' || name === 'x-supabase-api-version';
-		}
-	});
+	return resolve(event);
 };
 
 const authGuard: Handle = async ({ event, resolve }) => {
-	const { session, user } = await event.locals.safeGetSession();
-	event.locals.session = session;
+	const user = await event.locals.getUser();
 	event.locals.user = user;
 
-	if (!event.locals.session && event.url.pathname.startsWith('/account')) {
+	if (!user && event.url.pathname.startsWith('/account')) {
 		redirect(303, '/signin');
 	}
 
-	if (event.locals.session && event.url.pathname === '/signin') {
+	if (user && event.url.pathname === '/signin') {
 		redirect(303, '/account');
 	}
 
 	return resolve(event);
 };
 
-export const handle: Handle = sequence(supabase, authGuard);
+export const handle: Handle = sequence(auth, authGuard);

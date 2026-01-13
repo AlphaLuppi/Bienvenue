@@ -86,7 +86,25 @@ export const authApi = {
 		apiClient('/auth/signout', {
 			method: 'POST',
 			token
-		})
+		}),
+
+	exchangeCodeForSession: (code: string) =>
+		apiClient<{ session: { access_token: string; refresh_token: string }; user: unknown }>(
+			'/auth/oauth/callback',
+			{
+				method: 'POST',
+				body: { code }
+			}
+		),
+
+	verifyOtp: (tokenHash: string, type: string) =>
+		apiClient<{ session: { access_token: string; refresh_token: string }; user: unknown }>(
+			'/auth/verify-otp',
+			{
+				method: 'POST',
+				body: { tokenHash, type }
+			}
+		)
 };
 
 // Profile API methods

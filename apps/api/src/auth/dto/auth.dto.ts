@@ -30,3 +30,16 @@ export class OAuthDto {
 	@IsString()
 	redirectUrl: string;
 }
+
+export class ExchangeCodeDto {
+	@IsString()
+	code: string;
+}
+
+export class VerifyOtpDto {
+	@IsString()
+	tokenHash: string;
+
+	@IsString()
+	type: string;
+}

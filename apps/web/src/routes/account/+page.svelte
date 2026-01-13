@@ -14,10 +14,10 @@
 	let errorMessage = $state('');
 
 	// Derive initial values from props (reactive to data/form changes)
-	let profileFullName = $derived(form?.fullName ?? data.profile?.full_name ?? '');
+	let profileFullName = $derived(form?.fullName ?? data.profile?.fullName ?? '');
 	let profileUsername = $derived(form?.username ?? data.profile?.username ?? '');
 	let profileWebsite = $derived(form?.website ?? data.profile?.website ?? '');
-	let profileAvatarUrl = $derived(form?.avatarUrl ?? data.profile?.avatar_url ?? '');
+	let profileAvatarUrl = $derived(form?.avatarUrl ?? data.profile?.avatarUrl ?? '');
 
 	// Form fields for editing
 	let fullName = $state('');
@@ -43,8 +43,8 @@
 				.toUpperCase()
 				.slice(0, 2);
 		}
-		if (data.session?.user?.email) {
-			return data.session.user.email.slice(0, 2).toUpperCase();
+		if (data.user?.email) {
+			return data.user.email.slice(0, 2).toUpperCase();
 		}
 		return '?';
 	});
@@ -88,20 +88,22 @@
 				</Avatar.Root>
 			</div>
 			<Card.Title class="text-2xl">Mon Profil</Card.Title>
-			<Card.Description>
-				Gérez vos informations personnelles
-			</Card.Description>
+			<Card.Description>Gérez vos informations personnelles</Card.Description>
 		</Card.Header>
 
 		<Card.Content>
 			{#if successMessage}
-				<div class="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
+				<div
+					class="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400"
+				>
 					{successMessage}
 				</div>
 			{/if}
 
 			{#if errorMessage}
-				<div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+				<div
+					class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
+				>
 					{errorMessage}
 				</div>
 			{/if}
@@ -112,7 +114,7 @@
 					<Input
 						id="email"
 						type="email"
-						value={data.session?.user?.email ?? ''}
+						value={data.user?.email ?? ''}
 						disabled
 						class="bg-muted"
 					/>

@@ -92,4 +92,44 @@ export class AuthService {
 
 		return { success: true };
 	}
+
+	async exchangeCodeForSession(code: string) {
+		const supabase = this.supabaseService.getClient();
+		const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+		if (error) {
+			throw new BadRequestException(error.message);
+		}
+
+		return {
+			success: true,
+			session: data.session,
+			user: data.user
+		};
+	}
+
+	async verifyOtp(tokenHash: string, type: string) {
+		const supabase = this.supabaseService.getClient();
+
+		// Supabase requires type to be EmailOtpType for token_hash verification
+		const emailOtpTypes = ['signup', 'invite', 'magiclink', 'recovery', 'email_change', 'email'];
+		if (!emailOtpTypes.includes(type)) {
+			throw new BadRequestException('Invalid OTP type');
+		}
+
+		const { data, error } = await supabase.auth.verifyOtp({
+			token_hash: tokenHash,
+			type: type as 'signup' | 'invite' | 'magiclink' | 'recovery' | 'email_change' | 'email'
+		});
+
+		if (error) {
+			throw new BadRequestException(error.message);
+		}
+
+		return {
+			success: true,
+			session: data.session,
+			user: data.user
+		};
+	}
 }
