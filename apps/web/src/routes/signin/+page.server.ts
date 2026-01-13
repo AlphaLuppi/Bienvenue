@@ -9,24 +9,26 @@ export const actions: Actions = {
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
+		// Use Supabase directly for signup since session cookies are handled here
 		const { error } = await supabase.auth.signUp({ email, password });
 		if (error) {
-			console.error(error);
-			redirect(303, '/signin/error');
+			console.error('Signup error:', error);
+			redirect(303, `/signin/error?message=${encodeURIComponent(error.message)}`);
 		} else {
 			redirect(303, '/');
 		}
 	},
 
-	login: async ({ request, locals: { supabase }, url }) => {
+	login: async ({ request, locals: { supabase } }) => {
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
+		// Use Supabase directly for login since session cookies are handled here
 		const { error } = await supabase.auth.signInWithPassword({ email, password });
 		if (error) {
-			console.error(error);
-			redirect(303, '/signin/error');
+			console.error('Login error:', error);
+			redirect(303, `/signin/error?message=${encodeURIComponent(error.message)}`);
 		} else {
 			redirect(303, '/account');
 		}
@@ -36,6 +38,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const provider = formData.get('provider') as Provider;
 
+		// Use Supabase directly for OAuth since redirect URL handling needs cookies
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider,
 			options: {

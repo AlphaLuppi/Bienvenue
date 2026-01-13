@@ -1,7 +1,7 @@
 <script lang="ts">
     import '../app.css';
     import { invalidate } from '$app/navigation';
-    import { authStore, initializeAuthStore } from '$lib/stores/auth.svelte.ts';
+    import { authStore, initializeAuthStore } from '$lib/stores/auth.svelte';
     import type { LayoutData } from './$types';
 
     let { children, data }: { children: any, data: LayoutData } = $props();
@@ -10,7 +10,7 @@
     $effect(() => {
         if (data.supabase) {
             initializeAuthStore(data.supabase);
-            authStore.setSession(data.session, data.user);
+            authStore.setSession(data.session, data.session?.user ?? null);
         }
     });
 
