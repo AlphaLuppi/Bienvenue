@@ -60,11 +60,15 @@ Key patterns:
 
 ## Architecture
 
+### Architecture Rule (MUST FOLLOW)
+**All business logic MUST stay on the NestJS backend (`apps/api/`). The SvelteKit frontend should only handle SSR/SEO concerns and session management. Never move business logic to SvelteKit API routes.**
+
 ### Authentication Flow
-- **Server hooks** (`src/hooks.server.ts`): Creates Supabase server client, validates JWT, guards `/account` routes
-- **Client store** (`src/lib/stores/auth.svelte.ts`): Singleton `AuthStore` class using Svelte 5 runes
-- **Supabase clients** (`src/lib/supabase.ts`): Factory functions for server/client/load contexts
-- Protected routes redirect unauthenticated users to `/auth`
+- **Server hooks** (`src/hooks.server.ts`): Validates JWT via NestJS backend, manages httpOnly cookies
+- **Cookie storage**: Access and refresh tokens stored in secure httpOnly cookies (not accessible to JavaScript)
+- **Protected routes**: Guard in hooks redirects unauthenticated users to `/signin`
+- **NestJS backend**: Handles ALL auth operations (signup, signin, OAuth, OTP, token validation) and profile CRUD
+- **No Supabase on frontend**: All Supabase interactions happen through the NestJS backend API
 
 ### Key Directories (in apps/web/)
 - `src/lib/components/ui/` - shadcn-svelte components (Button, Card, Input, etc.)
@@ -86,11 +90,43 @@ Leaflet with clustering (`leaflet.markercluster`), boundary canvas, and Turf.js 
 
 ## Environment Variables
 
-Required in `.env`:
+Required in `.env` for frontend (`apps/web/`):
 ```
-PUBLIC_SUPABASE_URL=your_supabase_url
-PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+API_URL=http://localhost:3000  # NestJS backend URL
 ```
+
+Required in `.env` for backend (`apps/api/`):
+```
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_KEY=your_service_key
+SUPABASE_JWT_SECRET=your_jwt_secret
+```
+
+## Database Setup
+
+The following tables must exist in your Supabase database:
+
+### Profiles Table
+Run this SQL in your Supabase dashboard (SQL Editor):
+```sql
+CREATE TABLE IF NOT EXISTS public.profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    username TEXT UNIQUE,
+    full_name TEXT,
+    website TEXT,
+    avatar_url TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role can access all profiles" ON public.profiles
+    FOR ALL USING (true);
+```
+
+Full migration file: `apps/api/supabase/migrations/001_create_profiles_table.sql`
 
 ## Code Style
 

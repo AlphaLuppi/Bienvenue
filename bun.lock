@@ -43,8 +43,6 @@
       "name": "bienvenue-web",
       "version": "0.0.1",
       "dependencies": {
-        "@supabase/ssr": "^0.6.1",
-        "@supabase/supabase-js": "^2.48.1",
         "@sveltejs/adapter-auto": "^4.0.0",
         "@sveltejs/adapter-vercel": "^5.10.2",
         "@turf/turf": "^7.2.0",
@@ -366,8 +364,6 @@
     "@supabase/postgrest-js": ["@supabase/postgrest-js@1.18.1", "", { "dependencies": { "@supabase/node-fetch": "^2.6.14" } }, ""],
 
     "@supabase/realtime-js": ["@supabase/realtime-js@2.11.2", "", { "dependencies": { "@supabase/node-fetch": "^2.6.14", "@types/phoenix": "^1.5.4", "@types/ws": "^8.5.10", "ws": "^8.18.0" } }, ""],
-
-    "@supabase/ssr": ["@supabase/ssr@0.6.1", "", { "dependencies": { "cookie": "^1.0.1" }, "peerDependencies": { "@supabase/supabase-js": "^2.43.4" } }, ""],
 
     "@supabase/storage-js": ["@supabase/storage-js@2.7.1", "", { "dependencies": { "@supabase/node-fetch": "^2.6.14" } }, ""],
 
@@ -1898,8 +1894,6 @@
     "@rollup/pluginutils/estree-walker": ["estree-walker@2.0.2", "", {}, ""],
 
     "@rollup/pluginutils/picomatch": ["picomatch@4.0.2", "", {}, ""],
-
-    "@supabase/ssr/cookie": ["cookie@1.0.2", "", {}, ""],
 
     "@sveltejs/adapter-node/rollup": ["rollup@4.32.0", "", { "dependencies": { "@types/estree": "1.0.6" }, "optionalDependencies": { "@rollup/rollup-win32-x64-msvc": "4.32.0" }, "bin": "dist/bin/rollup" }, ""],
 

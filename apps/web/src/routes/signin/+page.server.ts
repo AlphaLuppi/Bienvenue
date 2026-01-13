@@ -20,7 +20,7 @@ export const actions: Actions = {
 		const result = await authApi.signUp(email, password);
 
 		if (!result.success) {
-			return fail(400, { message: result.error || 'Erreur lors de l\'inscription' });
+			return fail(400, { message: result.error || "Erreur lors de l'inscription" });
 		}
 
 		// If session is returned (email confirmation disabled), store tokens
