@@ -7,7 +7,7 @@
 	
 	const MENU_ITEMS = [
 		{ id: 'connection', label: 'Connexion', href: '/signin' },
-		{ id: 'inscription', label: 'Inscription', href: '/signup' }
+		{ id: 'inscription', label: 'Inscription', href: '/signin' }
 	] as const;
 
 	let hamburgerMenuIsOpen = $state(false);
@@ -31,7 +31,7 @@
 
 		<div class="ml-auto hidden md:flex h-full items-center">
 			<Button variant="outline" class="mr-6 text-sm" href="/signin">Se connecter</Button>
-			<Button variant="default" class="mr-6 text-sm" href="/signup">S'inscrire</Button>
+			<Button variant="default" class="mr-6 text-sm" href="/signin">S'inscrire</Button>
 		</div>
 
 		<button class="ml-6 md:hidden" use:toggleOverflowHidden>

@@ -8,19 +8,28 @@ Bienvenue is a SvelteKit 2 web application for finding new life opportunities, f
 
 ## Common Commands
 
+**IMPORTANT: Use `bun` instead of `npm` for all commands.**
+
 ```bash
-npm run dev           # Start development server
-npm run build         # Production build
-npm run preview       # Preview production build
-npm run check         # Type-check with svelte-check
-npm run check:watch   # Type-check in watch mode
-npm run lint          # Check formatting (Prettier) and lint (ESLint)
-npm run format        # Auto-format all files with Prettier
-npm run test:unit     # Run unit tests with Vitest (watch mode)
-npm run test:unit -- --run  # Run unit tests once
-npm run test:e2e      # Run Playwright E2E tests
-npm run test          # Run all tests (unit + e2e)
+bun run dev           # Start development server
+bun run build         # Production build
+bun run preview       # Preview production build
+bun run check         # Type-check with svelte-check
+bun run check:watch   # Type-check in watch mode
+bun run lint          # Check formatting (Prettier) and lint (ESLint)
+bun run format        # Auto-format all files with Prettier
+bun run test:unit     # Run unit tests with Vitest (watch mode)
+bun run test:unit --run  # Run unit tests once
+bun run test:e2e      # Run Playwright E2E tests
+bun run test          # Run all tests (unit + e2e)
 ```
+
+## Monorepo Structure (Turborepo)
+
+This is a monorepo managed by Turborepo:
+- `apps/web/` - SvelteKit frontend
+- `apps/api/` - NestJS backend
+- `packages/shared/` - Shared types and utilities
 
 ## Svelte 5 Runes (Critical)
 
@@ -57,17 +66,18 @@ Key patterns:
 - **Supabase clients** (`src/lib/supabase.ts`): Factory functions for server/client/load contexts
 - Protected routes redirect unauthenticated users to `/auth`
 
-### Key Directories
+### Key Directories (in apps/web/)
 - `src/lib/components/ui/` - shadcn-svelte components (Button, Card, Input, etc.)
 - `src/lib/components/map/` - Leaflet map integration
 - `src/lib/stores/` - Svelte 5 rune-based stores
+- `src/lib/states/` - Svelte 5 rune-based state (map, chat)
 - `src/lib/types/` - TypeScript type definitions
 - `src/routes/solutions/[id]/` - Dynamic solution detail pages
 
 ### UI Components
 Uses **shadcn-svelte** with Bits UI. Add components via:
 ```bash
-npx shadcn-svelte@latest add [component-name]
+bunx shadcn-svelte@latest add [component-name]
 ```
 Components aliased to `$lib/components`, utils to `$lib/utils`.
 
