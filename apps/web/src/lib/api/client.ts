@@ -129,3 +129,17 @@ export const profileApi = {
 			body: data
 		})
 };
+
+// Waitlist API methods
+export const waitlistApi = {
+	addToWaitlist: (email: string, source?: string, metadata?: Record<string, unknown>) =>
+		apiClient<{ success: boolean; message: string }>('/waitlist', {
+			method: 'POST',
+			body: { email, source, metadata }
+		}),
+
+	getCount: () =>
+		apiClient<{ count: number }>('/waitlist/count', {
+			method: 'GET'
+		})
+};
