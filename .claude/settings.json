@@ -1,0 +1,64 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun:*)",
+      "Bash(bunx:*)",
+      "Bash(turbo:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(nest:*)",
+      "Bash(playwright:*)",
+      "Bash(vitest:*)",
+      "Bash(tsc:*)",
+      "Bash(eslint:*)",
+      "Bash(prettier:*)",
+      "Bash(dir:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(cd:*)",
+      "Bash(pwd:*)",
+      "Bash(curl:*)",
+      "Bash(which:*)",
+      "Bash(where:*)",
+      "Read(apps/**)",
+      "Read(packages/**)",
+      "Read(.github/**)",
+      "Read(.claude/**)",
+      "Edit(apps/**)",
+      "Edit(packages/**)",
+      "Edit(.github/**)",
+      "Edit(.claude/**)",
+      "Write(apps/**)",
+      "Write(packages/**)",
+      "Write(.github/**)",
+      "Write(.claude/**)",
+      "mcp__claude-in-chrome__*"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(*--force*)",
+      "Bash(*> /dev/null*)",
+      "Edit(.env*)",
+      "Write(.env*)"
+    ]
+  },
+  "hooks": {
+    "postToolCall": [
+      {
+        "matcher": {
+          "tool": "Edit",
+          "path": "**/*.{ts,svelte,js}"
+        },
+        "command": "echo 'File edited - consider running tests'"
+      }
+    ]
+  }
+}
