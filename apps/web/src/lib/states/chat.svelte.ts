@@ -1,20 +1,17 @@
 import type { ChatMessage } from '$lib/types/map';
 
-let isOpen = $state(window?.innerWidth >= 768 || false);
-let messages = $state<ChatMessage[]>([
-    {
-        id: 1,
-        content: "Bonjour ! Je suis votre assistant. Comment puis-je vous aider à trouver votre nouvelle vie ?",
-        sender: 'assistant',
-        timestamp: new Date()
-    }
-]);
-let newMessage = $state('');
-let isSending = $state(false);
-
-export const chatState = {
-    isOpen,
-    messages,
-    newMessage,
-    isSending
-}; 
+// Use $state with object properties for proper reactivity
+export const chatState = $state({
+	isOpen: true,
+	messages: [
+		{
+			id: 1,
+			content:
+				'Bonjour ! Je suis votre assistant pour trouver votre nouvelle vie en France. Dites-moi ce que vous recherchez : région, type de travail, loisirs, budget...',
+			sender: 'assistant' as const,
+			timestamp: new Date()
+		}
+	] as ChatMessage[],
+	newMessage: '',
+	isSending: false
+});
