@@ -1,6 +1,8 @@
 import { env } from '$env/dynamic/private';
 
-const API_BASE_URL = env.API_URL || 'http://localhost:3000';
+function getApiBaseUrl(): string {
+	return env.API_URL || 'http://localhost:3000';
+}
 
 interface RequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -29,7 +31,7 @@ export async function apiClient<T>(
 	}
 
 	try {
-		const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
+		const response = await fetch(`${getApiBaseUrl()}/api${endpoint}`, {
 			method,
 			headers,
 			body: body ? JSON.stringify(body) : undefined
