@@ -45,7 +45,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          model: claude-sonnet-4-20250514
+          model: claude-sonnet-4-5-20250929
           max_turns: 10
           timeout_minutes: 30
           allowed_tools: |
@@ -113,7 +113,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          model: claude-sonnet-4-20250514
+          model: claude-sonnet-4-5-20250929
           max_turns: 5
           timeout_minutes: 15
           trigger_phrase: ""  # Empty means auto-trigger on PR open
