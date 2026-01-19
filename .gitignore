@@ -2,12 +2,14 @@ test-results
 node_modules
 
 # Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
+*.output
+*.vercel
+*.netlify
+*.wrangler
+*.svelte-kit
 /build
+dist/
+**/dist/
 
 # OS
 .DS_Store
@@ -20,8 +22,17 @@ Thumbs.db
 !.env.test
 
 # Vite
-vite.config.js.timestamp-*
-package-lock.json
-Svelte.pdf
-.cursor/rules/bienvenue.mdc
-package-lock.json
+*vite.config.js.timestamp-*
+*Svelte.pdf
+*.cursor/rules/bienvenue.mdc
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Turbo
+.turbo
+
+.idea
