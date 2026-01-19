@@ -1,6 +1,8 @@
 import { env } from '$env/dynamic/private';
 
-const API_BASE_URL = env.API_URL || 'http://localhost:3000';
+function getApiBaseUrl(): string {
+	return env.API_URL || 'http://localhost:3000';
+}
 
 interface RequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -29,7 +31,7 @@ export async function apiClient<T>(
 	}
 
 	try {
-		const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
+		const response = await fetch(`${getApiBaseUrl()}/api${endpoint}`, {
 			method,
 			headers,
 			body: body ? JSON.stringify(body) : undefined
@@ -127,5 +129,19 @@ export const profileApi = {
 			method: 'PUT',
 			token,
 			body: data
+		})
+};
+
+// Waitlist API methods
+export const waitlistApi = {
+	addToWaitlist: (email: string, source?: string, metadata?: Record<string, unknown>) =>
+		apiClient<{ success: boolean; message: string }>('/waitlist', {
+			method: 'POST',
+			body: { email, source, metadata }
+		}),
+
+	getCount: () =>
+		apiClient<{ count: number }>('/waitlist/count', {
+			method: 'GET'
 		})
 };

@@ -2,7 +2,9 @@ import { type Handle, redirect } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { env } from '$env/dynamic/private';
 
-const API_BASE_URL = env.API_URL || 'http://localhost:3000';
+function getApiBaseUrl(): string {
+	return env.API_URL || 'http://localhost:3000';
+}
 
 interface UserProfile {
 	username: string | null;
@@ -29,7 +31,7 @@ const auth: Handle = async ({ event, resolve }) => {
 
 		try {
 			// Fetch user authentication data
-			const authResponse = await fetch(`${API_BASE_URL}/api/auth/me`, {
+			const authResponse = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`
 				}
@@ -48,7 +50,7 @@ const auth: Handle = async ({ event, resolve }) => {
 			// Fetch user profile
 			let profile: UserProfile | null = null;
 			try {
-				const profileResponse = await fetch(`${API_BASE_URL}/api/profile`, {
+				const profileResponse = await fetch(`${getApiBaseUrl()}/api/profile`, {
 					headers: {
 						Authorization: `Bearer ${accessToken}`
 					}

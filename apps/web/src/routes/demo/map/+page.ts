@@ -5,4 +5,4 @@ export function load() {
     return {
         // Vous pouvez charger des données ici qui seront disponibles dans le composant
     };
-} 
+}
