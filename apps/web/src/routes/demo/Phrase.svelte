@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
 	import * as Card from "$lib/components/ui/card";
-	import "../app.css";
+	import "../../app.css";
 	import { cn } from "$lib/utils";
 	import { fade, scale, fly } from 'svelte/transition';
     import { onMount } from 'svelte';
@@ -64,7 +64,7 @@
         await new Promise(resolve => setTimeout(resolve, 800));
 
         // Rediriger vers la page de carte
-        goto('/map');
+        goto('/demo/map');
 	}
 
 	function handleClose() {

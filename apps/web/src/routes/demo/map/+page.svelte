@@ -64,7 +64,7 @@
     <div class="flex flex-1 overflow-hidden relative">
         <!-- Chat -->
         <Chat />
-        
+
         <!-- Bouton pour ouvrir le chat sur mobile -->
         {#if !chatState.isOpen}
             <div transition:fly={{ x: -50, duration: 300 }}>
@@ -78,10 +78,10 @@
                 </Button>
             </div>
         {/if}
-        
+
         <!-- Carte -->
         <div class="relative w-full h-full">
             <Map center={DEFAULT_CENTER} zoom={DEFAULT_ZOOM} />
         </div>
     </div>
-</div> 
+</div>

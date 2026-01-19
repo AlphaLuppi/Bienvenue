@@ -12,7 +12,7 @@ interface FormState {
 
 export const formState = $state<FormState>({
     typeAction: "acheter",
-    typeBien: "appartement", 
+    typeBien: "appartement",
     localisations: [],
     metiers: [],
     cardinalite: [],
@@ -24,4 +24,4 @@ export const formState = $state<FormState>({
 
 export function updateField<K extends keyof FormState>(field: K, value: FormState[K]) {
     formState[field] = value;
-} 
+}
