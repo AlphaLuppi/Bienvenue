@@ -1,0 +1,50 @@
+meta {
+  name: Get Token from Supabase
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{supabase_url}}/auth/v1/token?grant_type=password
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  apikey: {{supabase_anon_key}}
+}
+
+body:json {
+  {
+    "email": "{{test_email}}",
+    "password": "{{test_password}}"
+  }
+}
+
+script:post-response {
+  if (res.body.access_token) {
+    bru.setEnvVar("access_token", res.body.access_token);
+  }
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return access_token", function() {
+    expect(res.body.access_token).to.be.a("string");
+  });
+}
+
+docs {
+  # Get Token from Supabase
+
+  Authenticates with Supabase to get a JWT access token.
+  The token is automatically saved to the `access_token` environment variable.
+
+  **Run this first** before testing authenticated endpoints.
+
+  **Required env vars:** test_email, test_password, supabase_anon_key
+}

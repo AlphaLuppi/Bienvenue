@@ -1,0 +1,32 @@
+meta {
+  name: Token in URL - Should Reject (Backend)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{backend_url}}{{backend_prefix}}/health/me?token={{access_token}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.status).to.equal(400);
+  });
+
+  test("should reject token in URL", function() {
+    expect(res.body.detail).to.include("URL");
+  });
+}
+
+docs {
+  # Token in URL - Should Reject (NFR8) (Backend)
+
+  Tests that tokens passed in URL query parameters are rejected.
+  This is a security requirement (NFR8) to prevent token leakage in logs.
+
+  **Endpoint:** GET /api/v1/health/me?token=... (Backend FastAPI)
+
+  **Expected:** 400 Bad Request
+}

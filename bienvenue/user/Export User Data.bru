@@ -1,0 +1,47 @@
+meta {
+  name: Export User Data
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/account/export
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return user data", function() {
+    expect(res.body.data).to.be.an("object");
+  });
+
+  test("should include export timestamp", function() {
+    expect(res.body.exported_at).to.be.a("string");
+  });
+
+  test("should include user info", function() {
+    expect(res.body.user).to.be.an("object");
+    expect(res.body.user.id).to.be.a("string");
+  });
+}
+
+docs {
+  # Export User Data (RGPD Article 20)
+
+  Exports all user data in a portable JSON format.
+  This is required by RGPD Article 20 (Right to Data Portability).
+
+  **Endpoint:** GET /account/export (Frontend SvelteKit)
+
+  **Expected:** 200 OK with user data export
+
+  **Prerequisites:** Run "Get Token from Supabase" first
+}

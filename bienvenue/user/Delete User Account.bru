@@ -1,0 +1,46 @@
+meta {
+  name: Delete User Account
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{base_url}}/account/delete
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "confirm": true
+  }
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should confirm deletion", function() {
+    expect(res.body.deleted).to.equal(true);
+  });
+}
+
+docs {
+  # Delete User Account (RGPD Article 17)
+
+  Permanently deletes the user account and all associated data.
+  This is required by RGPD Article 17 (Right to Erasure).
+
+  **Endpoint:** DELETE /account/delete (Frontend SvelteKit)
+
+  **WARNING:** This action is irreversible!
+
+  **Expected:** 200 OK with deletion confirmation
+
+  **Prerequisites:** Run "Get Token from Supabase" first
+}

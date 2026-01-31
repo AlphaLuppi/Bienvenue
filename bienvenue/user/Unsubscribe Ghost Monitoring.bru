@@ -1,0 +1,44 @@
+meta {
+  name: Unsubscribe Ghost Monitoring
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/account/unsubscribe
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+    "monitoring_id": "example-monitoring-id"
+  }
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should confirm unsubscription", function() {
+    expect(res.body.unsubscribed).to.equal(true);
+  });
+}
+
+docs {
+  # Unsubscribe from Ghost Monitoring
+
+  Removes a specific ghost monitoring subscription.
+  This allows users to stop receiving notifications for a monitored property.
+
+  **Endpoint:** POST /account/unsubscribe (Frontend SvelteKit)
+
+  **Expected:** 200 OK with unsubscription confirmation
+
+  **Prerequisites:** Run "Get Token from Supabase" first
+}

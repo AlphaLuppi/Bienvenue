@@ -1,0 +1,144 @@
+# Sprint Status - Bienvenue
+# ==========================
+# This file tracks development progress through Phase 4 implementation.
+# Update story statuses as work progresses.
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+
+generated: "2026-01-25"
+project: "Bienvenue"
+project_type: "Agent-based backend system"
+tracking_system: "file-system"
+story_location: "_bmad-output/implementation-artifacts/stories"
+
+development_status:
+  # ============================================
+  # EPIC 0: Infrastructure & DevOps
+  # ============================================
+  epic-0: in-progress
+  0-1-initialisation-projet-agents-uv: done
+  0-2-configuration-docker-compose: done
+  0-3-schema-supabase-pgvector: review
+  0-4-configuration-redis: review
+  0-5-configuration-variables-environnement: backlog
+  0-6-endpoint-sse-streaming: backlog
+  0-7-rate-limiting-utilisateur: backlog
+  0-8-conformite-rgpd: review
+  0-9-cicd-github-actions: backlog
+  0-10-correction-auth-routing-frontend: backlog
+  0-11-unification-chat-state: backlog
+  0-12-reactivite-marqueurs-carte: backlog
+  0-13-seed-data-communes: backlog
+  epic-0-retrospective: optional
+
+  # ============================================
+  # EPIC 1: Compte et accès sécurisé
+  # ============================================
+  epic-1: backlog
+  1-1-inscription-email-mot-de-passe: backlog
+  1-2-connexion-email-mot-de-passe: backlog
+  1-3-acces-securise-jwt-supabase: backlog
+  1-4-deconnexion: backlog
+  1-5-reinitialisation-mot-de-passe: backlog
+  1-6-connexion-google-oauth: backlog
+  epic-1-retrospective: optional
+
+  # ============================================
+  # EPIC 2: Conversation et validation des critères
+  # ============================================
+  epic-2: backlog
+  2-1-demarrage-conversation-relocation: backlog
+  2-2-echanges-multi-tours-contexte: backlog
+  2-3-questions-clarification: backlog
+  2-4-extraction-structuree-criteres: backlog
+  2-5-resume-criteres-avant-recherche: backlog
+  2-6-modification-criteres: backlog
+  2-7-validation-explicite-criteres: backlog
+  2-8-fallbacks-retry-logic-llm: backlog
+  epic-2-retrospective: optional
+
+  # ============================================
+  # EPIC 3: Recommandations de communes pertinentes
+  # ============================================
+  epic-3: backlog
+  3-1a-recherche-vectorielle-communes: backlog
+  3-1b-filtrage-sql-scoring: backlog
+  3-2-filtrage-offres-emploi: backlog
+  3-3-filtrage-offres-logement: backlog
+  3-4-calcul-score-global: backlog
+  3-5-calcul-scores-categorie: backlog
+  3-6-justifications-recommandations: backlog
+  epic-3-retrospective: optional
+
+  # ============================================
+  # EPIC 4: Exploration des résultats, carte et continuité
+  # ============================================
+  epic-4: backlog
+  4-1-affichage-classement-communes: backlog
+  4-2-visualisation-carte-marqueurs: backlog
+  4-3-details-commune-scores-justifications: backlog
+  4-4-affichage-offres-liens-externes: backlog
+  4-5-feedback-thumbs-recommandations: backlog
+  4-6-ajout-commune-favoris: backlog
+  4-7-consultation-suppression-favoris: backlog
+  4-8-persistance-session-historique: backlog
+  epic-4-retrospective: optional
+
+  # ============================================
+  # EPIC 5: Ghost Monitoring et notifications
+  # ============================================
+  epic-5: backlog
+  5-1-detection-communes-sans-offres: backlog
+  5-2-activation-ghost-monitoring: backlog
+  5-3-notification-activation-ghost: backlog
+  5-4-scan-periodique-nouvelles-offres: backlog
+  5-5-envoi-email-notification: backlog
+  5-6-opt-out-par-commune: backlog
+  5-7-expiration-automatique-30-jours: backlog
+  5-8-lien-unsubscribe-rgpd: backlog
+  epic-5-retrospective: optional
+
+  # ============================================
+  # EPIC 6: Observabilité et opérations
+  # ============================================
+  epic-6: backlog
+  6-1-traces-conversations-langfuse: backlog
+  6-2-suivi-couts-llm: backlog
+  6-3-mesure-latence-p95: backlog
+  6-4-dashboard-operateur: backlog
+  6-5-alertes-depassement-couts: backlog
+  6-6-logs-structures-contexte: backlog
+  6-7-recherche-investigation-logs: backlog
+  6-8-alertes-critiques-multi-canal: backlog
+  6-9-posthog-analytics-integration: backlog
+  epic-6-retrospective: optional
+
+# ============================================
+# SUMMARY
+# ============================================
+# Total Epics: 7
+# Total Stories: 59
+# Total Retrospectives: 7
+#
+# Status Counts:
+#   Epics in backlog: 6
+#   Epics in progress: 1
+#   Stories in backlog: 56
+#   Stories in review: 1
+#   Stories done: 2

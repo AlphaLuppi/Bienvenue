@@ -1,0 +1,37 @@
+meta {
+  name: Health Auth Status - No Auth (Backend)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{backend_url}}{{backend_prefix}}/health/auth-status
+  body: none
+  auth: none
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return authenticated false", function() {
+    expect(res.body.authenticated).to.equal(false);
+  });
+
+  test("should return user null", function() {
+    expect(res.body.user).to.equal(null);
+  });
+}
+
+docs {
+  # Health Auth Status - No Auth (Backend)
+
+  Tests the backend `/api/v1/health/auth-status` endpoint without a token.
+
+  **Endpoint:** GET /api/v1/health/auth-status (Backend FastAPI)
+
+  **Expected:** 200 OK with `authenticated: false`
+
+  This endpoint accepts optional authentication.
+}

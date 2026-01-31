@@ -1,0 +1,41 @@
+meta {
+  name: Health Me - With Auth (Backend)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{backend_url}}{{backend_prefix}}/health/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return authenticated true", function() {
+    expect(res.body.authenticated).to.equal(true);
+  });
+
+  test("should return user_id", function() {
+    expect(res.body.user_id).to.be.a("string");
+  });
+}
+
+docs {
+  # Health Me - With Auth (Backend)
+
+  Tests the backend `/api/v1/health/me` endpoint with a valid JWT token.
+
+  **Endpoint:** GET /api/v1/health/me (Backend FastAPI)
+
+  **Expected:** 200 OK with user info
+
+  **Prerequisites:** Run "Get Token from Supabase" first
+}
