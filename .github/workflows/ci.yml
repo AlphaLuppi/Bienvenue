@@ -97,3 +97,75 @@ jobs:
           name: test-screenshots
           path: apps/web/test-results/
           retention-days: 7
+
+  # Python Backend Jobs
+  python-lint:
+    name: Python Lint (Ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Run Ruff linting
+        run: uv run ruff check src/
+
+      - name: Run Ruff formatting check
+        run: uv run ruff format --check src/
+
+  python-typecheck:
+    name: Python Type Check (Mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Run Mypy
+        run: uv run mypy src/
+
+  python-test:
+    name: Python Tests (Pytest)
+    runs-on: ubuntu-latest
+    needs: [python-lint, python-typecheck]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Run tests with coverage
+        run: uv run pytest --cov=src --cov-report=xml --cov-report=term-missing
+        env:
+          CI: true
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-coverage
+          path: coverage.xml
+          retention-days: 7
