@@ -113,12 +113,12 @@
     </ScrollArea>
     
     <div class="p-4 border-t">
-        <form class="flex items-center gap-2" on:submit|preventDefault={handleSendMessage}>
-            <Input 
-                type="text" 
-                placeholder="Écrivez votre message..." 
-                bind:value={chatState.newMessage} 
-                on:keydown={(e) => {
+        <form class="flex items-center gap-2" onsubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
+            <Input
+                type="text"
+                placeholder="Écrivez votre message..."
+                bind:value={chatState.newMessage}
+                onkeydown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         handleSendMessage();

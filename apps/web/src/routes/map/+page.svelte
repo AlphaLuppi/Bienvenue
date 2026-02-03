@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { mapState, chatState } from '$lib/states/map.svelte';
+    import { mapState } from '$lib/states/map.svelte';
+	import { chatState } from '$lib/states/chat.svelte';
     import Chat from '$lib/components/chat/Chat.svelte';
     import Map from '$lib/components/map/Map.svelte';
     import { Button } from "$lib/components/ui/button";
