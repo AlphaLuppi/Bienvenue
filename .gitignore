@@ -36,3 +36,6 @@ Thumbs.db
 .turbo
 
 .idea
+
+# Claude Code local config (user-specific settings)
+.claude/settings.local.json

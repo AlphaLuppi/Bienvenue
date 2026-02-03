@@ -1,0 +1,140 @@
+# Workflow Status - Bienvenue (Système Agentique)
+
+# This tracks progress through BMM methodology Analysis, Planning, and Solutioning phases.
+# Implementation phase is tracked separately in sprint-status.yaml
+
+# STATUS DEFINITIONS:
+# ==================
+# Initial Status (before completion):
+#   - required: Must be completed to progress
+#   - optional: Can be completed but not required
+#   - recommended: Strongly suggested but not required
+#   - conditional: Required only if certain conditions met (e.g., if_has_ui)
+#
+# Completion Status:
+#   - {file-path}: File created/found (e.g., "docs/product-brief.md")
+#   - skipped: Optional/conditional workflow that was skipped
+
+generated: "2026-01-18"
+last_updated: "2026-01-25"
+project: "Bienvenue - Système Agentique (LangGraph)"
+project_type: "Agent-based backend system"
+selected_track: "method"
+field_type: "greenfield"
+workflow_path: "_bmad/bmm/workflows/workflow-status/paths/method-greenfield.yaml"
+
+# ============================================
+# PHASE 1: ANALYSIS (Optional Discovery)
+# ============================================
+workflow_status:
+  # Phase 1: Analysis
+  - phase: 1
+    name: "Analysis (Optional Discovery)"
+    workflows:
+      - id: "brainstorm-project"
+        name: "Brainstorming Session"
+        status: "_bmad-output/analysis/brainstorming-session-2026-01-18.md"
+        agent: "analyst"
+        command: "/bmad:bmm:workflows:brainstorming"
+        exec: "{project-root}/_bmad/core/workflows/brainstorming/workflow.md"
+        note: "✅ COMPLÉTÉ - 110 idées générées, 7 thèmes organisés, 3 plans MVP détaillés (2026-01-18)"
+        completed: "2026-01-18"
+
+      - id: "product-brief"
+        name: "Product Brief"
+        status: "_bmad-output/planning-artifacts/product-brief.md"
+        agent: "analyst"
+        command: "/bmad:bmm:workflows:create-product-brief"
+        exec: "{project-root}/_bmad/bmm/workflows/1-analysis/create-product-brief/workflow.md"
+        note: "✅ COMPLÉTÉ - Vision structurée synthétisant le brainstorming (2026-01-18)"
+        completed: "2026-01-18"
+
+      - id: "research"
+        name: "Research"
+        status: "skipped"
+        agent: "analyst"
+        command: "/bmad:bmm:workflows:research"
+        note: "Non sélectionné - peut être ajouté plus tard si besoin (LangGraph patterns, etc.)"
+
+  # Phase 2: Planning
+  - phase: 2
+    name: "Planning"
+    workflows:
+      - id: "prd"
+        name: "Product Requirements Document"
+        status: "_bmad-output/planning-artifacts/prd.md"
+        agent: "pm"
+        command: "/bmad:bmm:workflows:create-prd"
+        exec: "{project-root}/_bmad/bmm/workflows/2-plan-workflows/prd/workflow.md"
+        output: "PRD avec requirements fonctionnels et non-fonctionnels"
+        note: "✅ COMPLÉTÉ - 52 FRs + 27 NFRs définis (2026-01-20)"
+        completed: "2026-01-20"
+
+      - id: "create-ux-design"
+        name: "UX Design"
+        status: "_bmad-output/planning-artifacts/ux-design-specification.md"
+        agent: "ux-designer"
+        command: "/bmad:bmm:workflows:create-ux-design"
+        condition: "if_has_ui"
+        note: "✅ COMPLÉTÉ - Spécification UX carte-centrique desktop-first (2026-01-22)"
+        completed: "2026-01-22"
+
+  # Phase 3: Solutioning
+  - phase: 3
+    name: "Solutioning"
+    workflows:
+      - id: "create-architecture"
+        name: "Architecture"
+        status: "_bmad-output/planning-artifacts/architecture.md"
+        agent: "architect"
+        command: "/bmad:bmm:workflows:create-architecture"
+        exec: "{project-root}/_bmad/bmm/workflows/3-solutioning/create-architecture/workflow.md"
+        output: "Architecture du système agentique (LangGraph, state management, workflows)"
+        note: "✅ COMPLÉTÉ - Architecture LangGraph + FastAPI + Supabase (2026-01-24)"
+        completed: "2026-01-24"
+
+      - id: "create-epics-and-stories"
+        name: "Epics & Stories"
+        status: "_bmad-output/planning-artifacts/epics.md"
+        agent: "pm"
+        command: "/bmad:bmm:workflows:create-epics-and-stories"
+        exec: "{project-root}/_bmad/bmm/workflows/3-solutioning/create-epics-and-stories/workflow.md"
+        note: "✅ COMPLÉTÉ - 7 epics, 59 stories, 100% couverture FRs/NFRs (2026-01-24)"
+        completed: "2026-01-24"
+
+      - id: "test-design"
+        name: "Test Design"
+        status: "skipped"
+        agent: "tea"
+        command: "/bmad:bmm:workflows:test-design"
+        workflow: "{project-root}/_bmad/bmm/workflows/testarch/test-design/workflow.yaml"
+        note: "Non exécuté - peut être ajouté si nécessaire"
+
+      - id: "implementation-readiness"
+        name: "Implementation Readiness Check"
+        status: "_bmad-output/planning-artifacts/implementation-readiness-report-2026-01-25.md"
+        agent: "architect"
+        command: "/bmad:bmm:workflows:check-implementation-readiness"
+        exec: "{project-root}/_bmad/bmm/workflows/3-solutioning/check-implementation-readiness/workflow.md"
+        note: "✅ COMPLÉTÉ - PRÊT POUR IMPLÉMENTATION - 0 issues critiques (2026-01-25)"
+        completed: "2026-01-25"
+
+  # Phase 4: Implementation
+  - phase: 4
+    name: "Implementation"
+    workflows:
+      - id: "sprint-planning"
+        name: "Sprint Planning"
+        status: "_bmad-output/implementation-artifacts/sprint-status.yaml"
+        agent: "sm"
+        command: "/bmad:bmm:workflows:sprint-planning"
+        workflow: "{project-root}/_bmad/bmm/workflows/4-implementation/sprint-planning/workflow.yaml"
+        note: "✅ COMPLÉTÉ - 7 epics, 59 stories trackées (2026-01-25)"
+        completed: "2026-01-25"
+
+      - id: "dev-story"
+        name: "Story Development"
+        status: "ready"
+        agent: "dev"
+        command: "/bmad:bmm:workflows:dev-story"
+        note: "PRÊT - Commencer par Story 0.1 (initialisation projet uv)"
