@@ -22,7 +22,7 @@
 
 	const MENU_ITEMS_GUEST = [
 		{ id: 'connection', label: 'Connexion', href: '/signin' },
-		{ id: 'inscription', label: 'Inscription', href: '/signin' }
+		{ id: 'inscription', label: 'Inscription', href: '/signup' }
 	] as const;
 
 	let initials = $derived.by(() => {
@@ -98,7 +98,7 @@
 				</DropdownMenu.Root>
 			{:else}
 				<Button variant="outline" class="mr-6 text-sm" href="/signin">Se connecter</Button>
-				<Button variant="default" class="mr-6 text-sm" href="/signin">S'inscrire</Button>
+				<Button variant="default" class="mr-6 text-sm" href="/signup">S'inscrire</Button>
 			{/if}
 		</div>
 
