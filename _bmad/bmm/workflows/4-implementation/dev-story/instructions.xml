@@ -150,9 +150,17 @@
     <action>Check for any decisions or notes from team members in ClickUp comments</action>
     <action>Store ClickUp task_id as {{clickup_task_id}} for later updates</action>
 
+    <!-- Repository identification -->
+    <critical>ALWAYS check the ClickUp task description for the target GitHub repository</critical>
+    <action>Read the ClickUp task description to identify which GitHub repo this story targets</action>
+    <action>Look for repo indicators: tags ([Frontend], [Backend], [Infra]), explicit repo URLs, or description mentions</action>
+    <action>Verify you are on the correct repository and branch before starting implementation</action>
+    <action if="repo is ambiguous or not specified">ASK user which GitHub repository to use for this story</action>
+
     <output>✅ **Context Loaded**
       Story and project context available for implementation
       ClickUp task synced: {{clickup_task_id}}
+      Target repo: {{identified_repo}}
     </output>
   </step>
 
