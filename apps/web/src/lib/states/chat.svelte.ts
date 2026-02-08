@@ -1,20 +1,23 @@
+import { browser } from '$app/environment';
 import type { ChatMessage } from '$lib/types/map';
 
-let isOpen = $state(window?.innerWidth >= 768 || false);
-let messages = $state<ChatMessage[]>([
-    {
-        id: 1,
-        content: "Bonjour ! Je suis votre assistant. Comment puis-je vous aider à trouver votre nouvelle vie ?",
-        sender: 'assistant',
-        timestamp: new Date()
-    }
-]);
-let newMessage = $state('');
-let isSending = $state(false);
+// Determine initial isOpen state based on viewport width (desktop = open, mobile = closed)
+const getInitialIsOpen = (): boolean => {
+	if (!browser) return true; // SSR default
+	return window.innerWidth >= 768;
+};
 
-export const chatState = {
-    isOpen,
-    messages,
-    newMessage,
-    isSending
-}; 
+export const chatState = $state({
+	isOpen: getInitialIsOpen(),
+	messages: [
+		{
+			id: 1,
+			content:
+				"Bonjour ! Je suis votre assistant pour vous aider à trouver votre nouvelle vie. Que recherchez-vous aujourd'hui ?",
+			sender: 'assistant',
+			timestamp: new Date()
+		}
+	] as ChatMessage[],
+	newMessage: '',
+	isSending: false
+});

@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte';
+    import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
-    import type { Map, Marker as LeafletMarker, DivIcon } from 'leaflet';
+    import type { Map, Marker as LeafletMarker, DivIcon, LayerGroup } from 'leaflet';
     import { mapState } from '$lib/states/map.svelte';
     import type { MarkerType, LocationData } from '$lib/types/map';
     import HousingCard from "$lib/components/ui/housing-card/housing-card.svelte";
@@ -13,9 +13,11 @@
     }>();
 
     let map: Map;
-    let mainMarker: LeafletMarker;
+    let mainMarker: LeafletMarker | null = null;
     let subMarkers: LeafletMarker[] = [];
+    let markersLayerGroup: LayerGroup | null = null;
     let L: any;
+    let isMapReady = $state(false);
 
     // État pour gérer le popover
     let activeLocation = $state<LocationData | null>(null);
@@ -105,12 +107,32 @@
         }
     }
 
-    function initializeMarkers() {
+    function clearAllMarkers() {
+        // Remove main marker
+        if (mainMarker) {
+            mainMarker.remove();
+            mainMarker = null;
+        }
+
+        // Remove all sub markers
+        subMarkers.forEach(marker => marker.remove());
+        subMarkers = [];
+
+        // Clear layer group
+        if (markersLayerGroup) {
+            markersLayerGroup.clearLayers();
+        }
+
+        // Close any open popover
+        closeDetails();
+    }
+
+    function createMarkers() {
         if (!map || !L) return;
 
         const { main, sub } = mapState.solutionData;
 
-        // Initialiser le marqueur principal
+        // Create main marker
         const mainIcon = createCustomIcon(main.type);
         mainMarker = L.marker([main.lat, main.lng], {
             icon: mainIcon
@@ -118,7 +140,7 @@
         .addTo(map)
         .on('click', (e: L.LeafletMouseEvent) => handleMarkerClick(e, main));
 
-        // Initialiser les sous-marqueurs
+        // Create sub markers
         Object.values(sub).forEach(location => {
             const icon = createCustomIcon(location.type);
             const marker = L.marker([location.lat, location.lng], {
@@ -127,10 +149,63 @@
             .on('click', (e: L.LeafletMouseEvent) => handleMarkerClick(e, location));
             subMarkers.push(marker);
         });
+    }
 
-        // Ajouter un gestionnaire de clic sur la carte
+    function fitBoundsToMarkers() {
+        if (!map || !L || subMarkers.length === 0) return;
+
+        const allMarkers = mainMarker ? [mainMarker, ...subMarkers] : subMarkers;
+        const group = L.featureGroup(allMarkers);
+        const bounds = group.getBounds();
+
+        if (bounds.isValid()) {
+            map.flyToBounds(bounds.pad(0.2), {
+                duration: 0.5,
+                easeLinearity: 0.5
+            });
+        }
+    }
+
+    function updateMarkers() {
+        if (!isMapReady) return;
+
+        const startTime = performance.now();
+
+        clearAllMarkers();
+        createMarkers();
+
+        // Show sub markers if expanded
+        if (mapState.isExpanded) {
+            subMarkers.forEach(marker => marker.addTo(map));
+            fitBoundsToMarkers();
+        }
+
+        const duration = performance.now() - startTime;
+        if (duration > 500) {
+            console.warn(`[Map] Marker update took ${duration.toFixed(2)}ms (target: <500ms)`);
+        } else {
+            console.debug(`[Map] Marker update completed in ${duration.toFixed(2)}ms`);
+        }
+    }
+
+    function initializeMarkers() {
+        if (!map || !L) return;
+
+        createMarkers();
+
+        // Add click handler on map
         map.on('click', handleMapClick);
     }
+
+    // Reactive effect: update markers when solutionData changes
+    $effect(() => {
+        // Access solutionData to create dependency
+        const _ = mapState.solutionData;
+
+        if (isMapReady) {
+            updateMarkers();
+        }
+    });
 
     function leafletMap(node: HTMLElement) {
         async function initMap() {
@@ -160,6 +235,9 @@
 
             // Mettre à jour la position du popover lors du déplacement de la carte
             map.on('move', updatePopoverPosition);
+
+            // Mark map as ready for reactive updates
+            isMapReady = true;
         }
 
         initMap();
