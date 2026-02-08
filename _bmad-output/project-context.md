@@ -1,15 +1,15 @@
 ---
 project_name: 'Bienvenue'
-date: '2026-01-25'
-sections_completed: ['clickup_integration', 'technology_stack', 'frontend_rules', 'backend_rules', 'testing_rules', 'anti_patterns', 'integration']
+date: '2026-02-08'
+sections_completed: ['clickup_integration', 'technology_stack', 'monorepo_structure', 'architecture_rules', 'frontend_rules', 'backend_rules', 'auth_flow', 'sveltekit_patterns', 'testing_rules', 'anti_patterns', 'integration', 'code_style']
 status: 'complete'
-rule_count: 32
+rule_count: 48
 optimized_for_llm: true
 ---
 
 # Project Context for AI Agents
 
-_Critical rules and patterns for consistent implementation across Frontend (SvelteKit) and Backend (Python/LangGraph)._
+_Critical rules and patterns for consistent implementation across Frontend (SvelteKit) and Backend (NestJS + Python/LangGraph)._
 
 ---
 
@@ -85,23 +85,93 @@ Note: ClickUp currently has 3 statuses. Add "terminé" or "done" status in Click
 
 ---
 
+## Monorepo Structure (Turborepo)
+
+**IMPORTANT: Use `bun` instead of `npm` for all commands.**
+
+```
+Bienvenue/
+├── apps/
+│   ├── web/          # SvelteKit frontend (SSR/SEO only)
+│   └── api/          # NestJS backend (ALL business logic)
+└── packages/
+    └── shared/       # Shared types and utilities
+```
+
+### Common Commands
+```bash
+bun run dev           # Start development server
+bun run build         # Production build
+bun run check         # Type-check with svelte-check
+bun run lint          # Check formatting (Prettier) and lint (ESLint)
+bun run format        # Auto-format all files with Prettier
+bun run test:unit     # Run unit tests with Vitest
+bun run test:e2e      # Run Playwright E2E tests
+bun run test          # Run all tests (unit + e2e)
+```
+
+---
+
 ## Technology Stack
 
-### Frontend (Existing - Brownfield)
+### Frontend (apps/web/ - Brownfield)
 - **SvelteKit** 2.20.2 + **Svelte 5.25.5** (RUNES - critical!)
 - **TypeScript** 5.7.3 (strict mode)
 - **Tailwind CSS** 3.4.17 + bits-ui 0.22.0
-- **Supabase** 2.48.1 (@supabase/ssr)
-- **Leaflet** 1.9.4 + markercluster
+- **shadcn-svelte** with Bits UI (add via: `bunx shadcn-svelte@latest add [component]`)
+- **Leaflet** 1.9.4 + markercluster + Turf.js
 - **Testing:** Vitest 3.0.0 (unit), Playwright 1.49.1 (E2E)
 
-### Backend Agents (Greenfield)
+### Backend API (apps/api/ - NestJS)
+- **NestJS** with TypeScript
+- **Supabase** (PostgreSQL + Auth)
+- Handles ALL auth operations, profile CRUD, business logic
+
+### Backend Agents (Greenfield - Python)
 - **Python** 3.12+ with **uv**
 - **FastAPI** (SSE streaming)
 - **LangGraph** + LangChain
 - **Supabase** (PostgreSQL + pgvector)
 - **Redis** (cache + rate limiting)
 - **Langfuse** (LLM monitoring)
+
+---
+
+## Architecture Rule (MUST FOLLOW)
+
+**All business logic MUST stay on the NestJS backend (`apps/api/`). The SvelteKit frontend should only handle SSR/SEO concerns and session management. Never move business logic to SvelteKit API routes.**
+
+### Responsibility Split
+
+| Layer | Responsibility | Location |
+|-------|----------------|----------|
+| SvelteKit | SSR, SEO, session management, UI rendering | `apps/web/` |
+| NestJS | ALL business logic, auth, API, profile CRUD | `apps/api/` |
+| Python | AI agents, LLM orchestration, vector search | `agents/` |
+
+### Key Rule Violations (NEVER DO)
+- ❌ Never put business logic in SvelteKit API routes (`+server.ts`)
+- ❌ Never access Supabase directly from the frontend
+- ❌ Never handle auth tokens in client-side JavaScript
+- ❌ Never duplicate backend validation in frontend
+
+---
+
+## Authentication Flow
+
+### How Auth Works
+1. **Server hooks** (`apps/web/src/hooks.server.ts`): Validates JWT via NestJS backend
+2. **Cookie storage**: Access and refresh tokens in secure httpOnly cookies (not accessible to JS)
+3. **Protected routes**: Guard in hooks redirects unauthenticated users to `/signin`
+4. **NestJS backend**: Handles ALL auth operations (signup, signin, OAuth, OTP, token validation)
+
+### Auth Rules
+- ✅ All Supabase interactions happen through NestJS backend API
+- ✅ Tokens stored in httpOnly cookies only
+- ✅ JWT validation happens server-side in hooks
+- ❌ Never access Supabase auth directly from SvelteKit
+- ❌ Never store tokens in localStorage or sessionStorage
+- ❌ Never expose tokens to client-side JavaScript
 
 ---
 
@@ -138,6 +208,70 @@ let doubled = $derived(count * 2);
 {#snippet header()}...{/snippet}
 {@render header()}
 ```
+
+### Svelte 5 Advanced Patterns
+- Use `$derived.by(() => ...)` for complex derivations
+- Use `$effect.pre()` instead of `beforeUpdate`
+- Use `$bindable()` for two-way bindable props
+- Use `$state.raw()` for non-deep reactive state (performance)
+- Event modifiers like `|preventDefault` are not supported - use wrapper functions
+
+---
+
+## SvelteKit 2 Patterns (Critical)
+
+### Error and Redirect Handling
+```typescript
+// ❌ WRONG (throws)
+throw error(500, 'Something went wrong');
+throw redirect(303, '/login');
+
+// ✅ CORRECT (call directly)
+error(500, 'Something went wrong');
+redirect(303, '/login');
+```
+
+### Cookie Handling
+```typescript
+// ❌ WRONG (missing path)
+cookies.set('token', value);
+
+// ✅ CORRECT (always specify path)
+cookies.set('token', value, { path: '/' });
+```
+
+### Load Function Promises
+```typescript
+// ❌ WRONG (returning promise)
+return { data: fetchData() };
+
+// ✅ CORRECT (await explicitly)
+return { data: await fetchData() };
+```
+
+### External Navigation
+```typescript
+// ❌ WRONG (goto for external)
+goto('https://external-site.com');
+
+// ✅ CORRECT (use window.location)
+window.location.href = 'https://external-site.com';
+```
+
+---
+
+## Key Directories (apps/web/)
+
+| Path | Purpose |
+|------|---------|
+| `src/lib/components/ui/` | shadcn-svelte components (Button, Card, etc.) |
+| `src/lib/components/map/` | Leaflet map integration |
+| `src/lib/stores/` | Svelte 5 rune-based stores |
+| `src/lib/states/` | Svelte 5 rune-based state (map, chat) |
+| `src/lib/types/` | TypeScript type definitions |
+| `src/routes/solutions/[id]/` | Dynamic solution detail pages |
+
+---
 
 ### TypeScript Strict Mode
 - All functions must have explicit return types
@@ -252,6 +386,43 @@ class ConversationState(TypedDict):
 
 ---
 
+## Code Style
+
+### Formatting (Prettier)
+- Tabs for indentation
+- Single quotes
+- No trailing commas
+- 100 character line width
+
+### TypeScript
+- Strict mode enabled
+- All functions must have explicit return types
+- No `any` - use `unknown` and type guards
+- Nullable values must be handled explicitly
+
+### CSS
+- Tailwind CSS with dark mode (class-based)
+- Follow existing component patterns in `src/lib/components/ui/`
+
+---
+
+## Environment Variables
+
+### Frontend (apps/web/.env)
+```
+API_URL=http://localhost:3000  # NestJS backend URL
+```
+
+### Backend (apps/api/.env)
+```
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_KEY=your_service_key
+SUPABASE_JWT_SECRET=your_jwt_secret
+```
+
+---
+
 ## Usage Guidelines
 
 **For AI Agents:**
@@ -267,4 +438,4 @@ class ConversationState(TypedDict):
 
 ---
 
-_Last Updated: 2026-01-24_
+_Last Updated: 2026-02-08_
